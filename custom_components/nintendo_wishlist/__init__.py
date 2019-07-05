@@ -1,0 +1,1 @@
+"""Nintendo on sale component."""
