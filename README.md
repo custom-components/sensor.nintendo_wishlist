@@ -8,11 +8,14 @@ Home Assistant component that keeps track of Nintendo Switch games that are on
 sale on your wish list in home assistant. (There is currently not a way to get your
 wish list from Nintendo, so you have to keep track of it in this component.)
 
+[![nitendo wishlist card](https://raw.githubusercontent.com/custom-cards/nintendo-wishlist-card/master/example.png)
+
 ## HACS Installation
 
 1. Search for `Nintendo Wishlist Component` in the HACS Store tab.
 2. Add the code to your `configuration.yaml` using the config options below.
 3. **You will need to restart after installation for the component to start working.**
+4. Display it in your lovelace UI using the [nintendo-wishlist-card](https://github.com/custom-cards/nintendo-wishlist-card).
 
 ## Sample Sensor Configuration
 
