@@ -2,8 +2,11 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 
+## NOTE: This component currently only works with the US e-shop.
+
 Home Assistant component that keeps track of Nintendo Switch games that are on
-sale on your wish list.  **NOTE: This component currently only works with the US e-shop.**
+sale on your wish list in home assistant. (There is currently not a way to get your
+wish list from Nintendo, so you have to keep track of it in this component.)
 
 ## HACS Installation
 
