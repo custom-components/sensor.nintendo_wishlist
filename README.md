@@ -8,7 +8,7 @@ Home Assistant component that keeps track of Nintendo Switch games that are on
 sale on your wish list in home assistant. (There is currently not a way to get your
 wish list from Nintendo, so you have to keep track of it in this component.)
 
-[![nitendo wishlist card](https://raw.githubusercontent.com/custom-cards/nintendo-wishlist-card/master/example.png)
+[![nitendo wishlist card](https://raw.githubusercontent.com/custom-cards/nintendo-wishlist-card/master/cover-art.png)](https://raw.githubusercontent.com/custom-cards/nintendo-wishlist-card/master/cover-art.png)
 
 ## HACS Installation
 
