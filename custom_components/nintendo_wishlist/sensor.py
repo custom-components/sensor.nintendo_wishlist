@@ -141,10 +141,10 @@ class NintendoWishlistSensor(Entity):
                 match = {
                     'box_art_url': (
                         'https://www.nintendo.com{}'.format(game['boxArt'])),
-                    'normal_price': game['msrp'],
+                    'normal_price': '${}'.format(game['msrp']),
                     'percent_off': get_percent_off(
                         game['msrp'], game['salePrice']),
-                    'sale_price': game['salePrice'],
+                    'sale_price': '${}'.format(game['salePrice']),
                     'title': game['title'],
                 }
                 wish_list_matches.append(match)
