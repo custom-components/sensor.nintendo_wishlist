@@ -9,7 +9,7 @@ from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
 
-__version__ = '1.0.0'
+__version__ = '2.0.1'
 DOMAIN = 'nintendo_wishlist'
 REQUIREMENTS = [
     'algoliasearch==2.0.0b5',
