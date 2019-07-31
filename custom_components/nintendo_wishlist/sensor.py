@@ -26,6 +26,26 @@ NA_INDEX_NAMES = {
     'US': 'noa_aem_game_en_us',
 }
 
+# Mapping of country code to language code.  NOTE: language must be lowercase
+# in the URL to work.
+COUNTRY_LANG = {
+    'AT': 'at',
+    'BE': 'nl',
+    'CA': 'en',
+    'CH': 'de',
+    'DE': 'de',
+    'ES': 'es',
+    'FR': 'fr',
+    'GB': 'en',
+    'IT': 'it',
+    'NL': 'nl',
+    'PT': 'pt',
+    'RU': 'ru',
+    'US': 'en',
+    'ZA': 'za',
+}
+
+
 class Country(enum.Enum):
     """Enum for allowed countries."""
 
@@ -53,7 +73,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 # These are specific to European countries.
-EU_SEARCH_URL = 'https://searching.nintendo-europe.com/{country}/select?q=*&fq=type%3AGAME%20AND%20((playable_on_txt%3A%22HAC%22)%20AND%20(price_has_discount_b%3A%22true%22))%20AND%20sorting_title%3A*%20AND%20*%3A*&sort=price_discount_percentage_f%20desc%2C%20price_lowest_f%20desc&start=0&rows=500&wt=json&bf=linear(ms(priority%2CNOW%2FHOUR)%2C1.1e-11%2C0)'  # noqa
+EU_SEARCH_URL = 'https://searching.nintendo-europe.com/{language}/select?q=*&fq=type%3AGAME%20AND%20((playable_on_txt%3A%22HAC%22)%20AND%20(price_has_discount_b%3A%22true%22))%20AND%20sorting_title%3A*%20AND%20*%3A*&sort=price_discount_percentage_f%20desc%2C%20price_lowest_f%20desc&start=0&rows=500&wt=json&bf=linear(ms(priority%2CNOW%2FHOUR)%2C1.1e-11%2C0)'  # noqa
 EU_PRICE_URL = 'https://api.ec.nintendo.com/v1/price'
 
 # Below constants used by North America (US and CA)
@@ -152,10 +172,11 @@ class NintendoWishlistSensor(Entity):
         self._state = len(wish_list_matches)
 
     async def _eu_update(self):
+        lang = COUNTRY_LANG[self.country]
         wish_list_matches = {}
         # NOTE: This endpoint requires the country to be lowercase.
         async with self.session.get(
-                EU_SEARCH_URL.format(country=self.country.lower())) as resp:
+                EU_SEARCH_URL.format(language=lang)) as resp:
             # The content-type is text/html so we need to specify None here.
             data = await resp.json(content_type=None)
             for game in data['response']['docs']:
