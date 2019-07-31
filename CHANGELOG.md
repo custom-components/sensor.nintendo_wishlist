@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v2.0.1 (2019-07-31)
+## v2.0.2 (2019-07-31)
 
 * Fixed bug that caused an error for certain countries (Schweiz, Ireland, UK,
   and Belgium).
