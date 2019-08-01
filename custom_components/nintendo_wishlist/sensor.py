@@ -82,7 +82,7 @@ API_KEY = '9a20c93440cf63cf1a7008d75f7438bf'
 QUERIES = [
     {
         'indexName': 'noa_aem_game_en_us',
-        'params': 'query=&hitsPerPage=250&maxValuesPerFacet=30&page=0&facets=%5B%22generalFilters%22%2C%22platform%22%2C%22availability%22%2C%22categories%22%2C%22filterShops%22%2C%22virtualConsole%22%2C%22characters%22%2C%22priceRange%22%2C%22esrb%22%2C%22filterPlayers%22%5D&tagFilters=&facetFilters=%5B%5B%22generalFilters%3ADeals%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D'  # noqa
+        'params': 'query=&hitsPerPage=350&maxValuesPerFacet=30&page=0&facets=%5B%22generalFilters%22%2C%22platform%22%2C%22availability%22%2C%22categories%22%2C%22filterShops%22%2C%22virtualConsole%22%2C%22characters%22%2C%22priceRange%22%2C%22esrb%22%2C%22filterPlayers%22%5D&tagFilters=&facetFilters=%5B%5B%22generalFilters%3ADeals%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D'  # noqa
     },
 ]
 _LOGGER = logging.getLogger(__name__)
