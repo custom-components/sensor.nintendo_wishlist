@@ -69,3 +69,18 @@ Conversely, if you would like to match multiple titles that have a similar name
 you can specify less of the title.  An example of this would be to add an item
 to your wishlist like `Shantae`.  This would match any of the Shantae titles on
 the e-shop (e.g. `Shantae and the Pirate's Curse` and `Shantae: Half-Genie Hero`.
+
+### Sensors for Automations
+
+When the custom component is run it will create a new sensor named `sensor.nintendo_wishlist`.
+It's state will be the total number of games from your wish list that are on sale.
+This sensor can be used with the [custom card](https://github.com/custom-cards/nintendo-wishlist-card).
+
+The component will additionally create a sensor per title in your wish list.  These
+will be named `sensor.nintendo_wishlist_{title_name}`.  For example Mega Man 11
+would be `sensor.nintendo_wishlist_mega_man_11`.  The state of each sensor will
+be `0` if it is not on sale and `1` if it is on sale.  You can use these sensors
+in your automations to send notifications, blink your lights, or any other
+automation you would like to do when a title on your wish list goes on sale.
+
+[![example sensors](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/sensors.png)](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/sensors.png)

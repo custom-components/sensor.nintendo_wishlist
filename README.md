@@ -82,3 +82,5 @@ would be `sensor.nintendo_wishlist_mega_man_11`.  The state of each sensor will
 be `0` if it is not on sale and `1` if it is on sale.  You can use these sensors
 in your automations to send notifications, blink your lights, or any other
 automation you would like to do when a title on your wish list goes on sale.
+
+[![example sensors](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/sensors.png)](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/sensors.png)
