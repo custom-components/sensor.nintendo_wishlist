@@ -9,7 +9,7 @@ from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
 
-__version__ = '2.0.1'
+__version__ = '2.1.0'
 DOMAIN = 'nintendo_wishlist'
 REQUIREMENTS = [
     'algoliasearch==2.0.0b5',
@@ -91,7 +91,9 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_platform(hass, config, async_add_entities,
                                discovery_info=None):
     """Setup the sensor platform."""
-    sensors = [NintendoWishlistSensor(config)]
+    sensors = [
+        NintendoWishlistSensor(config, game) for game in config['wishlist']]
+    sensors.append(NintendoWishlistSensor(config))
     async_add_entities(sensors, True)
 
 
@@ -110,17 +112,23 @@ def get_percent_off(original_price: float, sale_price: float) -> int:
 class NintendoWishlistSensor(Entity):
     """Representation of a sensor."""
 
-    def __init__(self, config):
+    def __init__(self, config, game: str = None):
         import aiohttp
         self.attrs = {}
         self.country = config['country'].name
         self.wishlist = [g.lower() for g in config['wishlist']]
         self.session = aiohttp.ClientSession()
+        self.game = None
+        if game is not None:
+            self.game = game.lower()
+            self.wishlist = [self.game]
         self._state = None
 
     @property
     def name(self):
         """Return the name of the sensor."""
+        if self.game:
+            return 'Nintendo Wishlist {}'.format(self.game)
         return 'Nintendo Wishlist'
 
     @property

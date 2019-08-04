@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v2.1.0 (2019-08-04)
+
+* Added a sensor for each game in the wish list in addition to the previous
+  sensor that contained all games on the wish list.
+
 ## v2.0.3 (2019-08-01)
 
 * Increase the number of search results to 350 as we weren't looking at all
