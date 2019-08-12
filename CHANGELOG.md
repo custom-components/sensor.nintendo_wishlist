@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v2.1.1 (2019-08-12)
+
+* Updated the friendly name for each created sensor to just be the game title.
+
 ## v2.1.0 (2019-08-04)
 
 * Added a sensor for each game in the wish list in addition to the previous
