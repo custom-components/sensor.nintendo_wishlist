@@ -84,3 +84,11 @@ in your automations to send notifications, blink your lights, or any other
 automation you would like to do when a title on your wish list goes on sale.
 
 [![example sensors](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/master/sensors.png)](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/master/sensors.png)
+
+#### Example NodeRed Flow
+
+You can import an [example of a node-red flow](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/master/example_node_red_flow.json) that sends an alert to kodi when
+a game on your wish list is on sale.  You can use the inject node to test the
+flow and customize it to your preferences.
+
+[![example nodered flow](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/master/example_node_red_flow.png)](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/master/example_node_red_flow.png)
