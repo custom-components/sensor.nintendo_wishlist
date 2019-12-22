@@ -37,6 +37,7 @@ wish list from Nintendo, so you have to keep track of it in this component.)
         - Bloodstained
         - Dark Souls
         - Velocity X
+        - "The Legend of Zelda: Breath of the Wild"
 
 ### Supported Countries
 
