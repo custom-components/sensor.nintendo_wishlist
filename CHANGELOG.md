@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v2.2.0 (2019-12-24)
+
+* Updated to parse all games on sale.  Previously it was only looking at
+  the first 350 results so it's possible it would miss finding a game on your
+  wish list.
+
 ## v2.1.1 (2019-08-12)
 
 * Updated the friendly name for each created sensor to just be the game title.

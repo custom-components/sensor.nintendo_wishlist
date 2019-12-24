@@ -26,6 +26,9 @@ wish list from Nintendo, so you have to keep track of it in this component.)
 
 ## Sample Sensor Configuration
 
+*Note:* If the title contains characters that might confuse yaml like a `:` or `'` quote the entire string
+like the last game in the example below.
+
     sensor:
     - platform: nintendo_wishlist
       country: US
@@ -37,6 +40,7 @@ wish list from Nintendo, so you have to keep track of it in this component.)
         - Bloodstained
         - Dark Souls
         - Velocity X
+        - "The Legend of Zelda: Breath of the Wild"
 
 ### Supported Countries
 
