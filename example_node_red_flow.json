@@ -35,7 +35,7 @@
                 "targetValue": "",
                 "propertyType": "current_state",
                 "propertyValue": "new_state.state",
-                "comparatorType": "is",
+                "comparatorType": ">=",
                 "comparatorValueDatatype": "str",
                 "comparatorValue": "1"
             }
