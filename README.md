@@ -22,7 +22,7 @@ wish list from Nintendo, so you have to keep track of it in this component.)
 |Name|Required|Description|
 |-|-|-|
 |country|yes|The 2 letter country code.  See [Supported Countries](#supported-countries) below.|
-|whishlist|yes|A list of Nintendo Switch titles|
+|wishlist|yes|A list of Nintendo Switch titles|
 
 ## Sample Sensor Configuration
 
