@@ -8,6 +8,7 @@ from typing import Any, Dict, List
 from algoliasearch.search_client import SearchClient
 import voluptuous as vol
 
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
@@ -94,8 +95,10 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Setup the sensor platform."""
-    sensors = [NintendoWishlistSensor(config, game) for game in config["wishlist"]]
-    sensors.append(NintendoWishlistSensor(config))
+    sensors = [
+        NintendoWishlistSensor(hass, config, game) for game in config["wishlist"]
+    ]
+    sensors.append(NintendoWishlistSensor(hass, config))
     async_add_entities(sensors, True)
 
 
@@ -114,13 +117,11 @@ def get_percent_off(original_price: float, sale_price: float) -> int:
 class NintendoWishlistSensor(Entity):
     """Representation of a sensor."""
 
-    def __init__(self, config, game: str = None):
-        import aiohttp
-
+    def __init__(self, hass, config, game: str = None):
         self.attrs = {}
         self.country = config["country"].name
         self.wishlist = [g.lower() for g in config["wishlist"]]
-        self.session = aiohttp.ClientSession()
+        self.session = async_get_clientsession(hass)
         self.game = None
         # This attribute holds the title before we lowercase it.
         self._game = None
