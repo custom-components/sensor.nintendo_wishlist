@@ -182,6 +182,8 @@ class EShop:
             prices = await r.json()
             for price in prices["prices"]:
                 n_id = price["title_id"]
-                pricing[n_id]["normal_price"] = price["regular_price"]["amount"]
-                pricing[n_id]["sale_price"] = price["discount_price"]["amount"]
+                pricing[n_id] = {
+                    "normal_price": price["regular_price"]["amount"],
+                    "sale_price": price["discount_price"]["amount"],
+                }
         return pricing
