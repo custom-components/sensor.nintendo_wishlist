@@ -1,4 +1,6 @@
 {
+    "domains": ["binary_sensor", "sensor"],
+    "iot_class": "Cloud Polling",
     "name": "Nintendo Wishlist",
     "render_readme": true
 }

@@ -1,8 +1,8 @@
 {
+  "codeowners": ["@boralyl"],
   "domain": "nintendo_wishlist",
-  "name": "Nintendo Wishlist Component",
   "documentation": "https://github.com/custom-components/sensor.nintendo_wishlist",
   "dependencies": [],
-  "codeowners": ["@boralyl"],
-  "requirements": ["algoliasearch==2.2.0"]
+  "name": "Nintendo Wishlist Component",
+  "requirements": ["algoliasearch==2.2.0", "typing-extensions==3.7.4.1"]
 }

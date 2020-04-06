@@ -1,1 +1,1 @@
-"""Nintendo on sale component."""
+"""Nintendo Wishlist integration."""
