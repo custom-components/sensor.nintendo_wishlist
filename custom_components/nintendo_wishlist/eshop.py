@@ -4,9 +4,11 @@ import logging
 import math
 from typing import Any, Dict, List, Tuple
 
+import aiohttp
 from algoliasearch.search_client import SearchClient
 
 from .types import SwitchGame
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -83,26 +85,28 @@ def get_percent_off(original_price: float, sale_price: float) -> int:
     return 100 - math.ceil(100 / (original_price / sale_price))
 
 
-class Wishlist:
-    """Encapsulates logic for retrieving sale data for a wishlist."""
+class EShop:
+    """Encapsulates logic for retrieving eshop data for countries."""
 
-    def __init__(self, country: Country, search_terms: List[str]):
+    def __init__(self, country: Country, session: aiohttp.ClientSession):
         self.country = country
-        self.search_terms = search_terms
+        self.session = session
         self.fetch_method = self.fetch_na if country in NA_COUNTRIES else self.fetch_eu
 
-    async def fetch(self) -> List[SwitchGame]:
+    async def fetch_on_sale(self) -> List[SwitchGame]:
         """Fetch data about games that are on sale."""
         return await self.fetch_method()
 
-    def get_switch_game(self, game: Dict[str, Any]) -> SwitchGame:
+    def get_na_switch_game(self, game: Dict[str, Any]) -> SwitchGame:
         """Get a SwitchGame from a json result."""
         box_art = game.get("boxArt", game.get("gallery"))
         if not box_art or not box_art.endswith((".png", ".jpg")):
             raise ValueError("Couldn't find box art: %s", game)
+
         return {
             "box_art_url": f"https://www.nintendo.com{box_art}",
             "normal_price": f"${game['msrp']}",
+            "nsuid": int(game["nsuid"]),
             "percent_off": get_percent_off(game["msrp"], game["salePrice"]),
             "sale_price": f"${game['salePrice']}",
             "title": game["title"],
@@ -122,7 +126,7 @@ class Wishlist:
         results = await client.multiple_queries_async(queries)
         return (
             [
-                self.get_switch_game(r)
+                self.get_na_switch_game(r)
                 for r in results["results"][0]["hits"]
                 if r.get("boxArt")
             ],
@@ -145,5 +149,35 @@ class Wishlist:
                     games.extend(games_on_sale)
         return games
 
+    def get_eu_switch_game(self, game: dict) -> SwitchGame:
+        return {
+            "box_art_url": f"https:{game['image_url']}",
+            "nsuid": int(game["nsuid_text"][0]),
+            "percent_off": game["price_discount_percentage_f"],
+            "title": game["title"],
+        }
+
     async def fetch_eu(self) -> List[SwitchGame]:
-        return []
+        lang = COUNTRY_LANG[self.country]
+        games: List[SwitchGame] = []
+        # NOTE: This endpoint requires the country to be lowercase.
+        async with self.session.get(EU_SEARCH_URL.format(language=lang)) as resp:
+            # The content-type is text/html so we need to specify None here.
+            data = await resp.json(content_type=None)
+            games.extend([self.get_eu_switch_game(r) for r in data["response"]["docs"]])
+        return games
+
+    async def get_eu_pricing_data(self, nsuids: List[int]):
+        pricing: Dict[int, Dict[str, Any]] = {}
+        params = {
+            "country": self.country,
+            "ids": ",".join(nsuids),
+            "lang": "en",
+        }
+        async with self.session.get(EU_PRICE_URL, params=params) as r:
+            prices = await r.json()
+            for price in prices["prices"]:
+                n_id = price["title_id"]
+                pricing[n_id]["normal_price"] = price["regular_price"]["amount"]
+                pricing[n_id]["sale_price"] = price["discount_price"]["amount"]
+        return pricing
