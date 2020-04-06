@@ -150,12 +150,15 @@ class EShop:
         return games
 
     def get_eu_switch_game(self, game: dict) -> SwitchGame:
-        return {
-            "box_art_url": f"https:{game['image_url']}",
-            "nsuid": int(game["nsuid_text"][0]),
-            "percent_off": game["price_discount_percentage_f"],
-            "title": game["title"],
-        }
+        try:
+            return {
+                "box_art_url": f"https:{game['image_url']}",
+                "nsuid": int(game["nsuid_text"][0]),
+                "percent_off": game["price_discount_percentage_f"],
+                "title": game["title"],
+            }
+        except Exception:
+            _LOGGER.exception("Error getting eu game: %s", game)
 
     async def fetch_eu(self) -> List[SwitchGame]:
         lang = COUNTRY_LANG[self.country]
