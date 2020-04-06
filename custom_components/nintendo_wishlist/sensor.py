@@ -112,7 +112,7 @@ class NintendoWishlistSensor(Entity):
         games = await self.fetcher.fetch()
         games = self._parse_matches(games)
         self.attrs["on_sale"] = games
-        self._State = len(games)
+        self._state = len(games)
 
     def _parse_matches(self, results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         matches: List[Dict[str, Any]] = []
