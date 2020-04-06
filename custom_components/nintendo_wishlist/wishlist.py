@@ -97,8 +97,11 @@ class Wishlist:
 
     def get_switch_game(self, game: Dict[str, Any]) -> SwitchGame:
         """Get a SwitchGame from a json result."""
+        box_art = game.get("boxArt", game.get("gallery"))
+        if not box_art or not box_art.endswith((".png", ".jpg")):
+            raise ValueError("Couldn't find box art: %s", game)
         return {
-            "box_art_url": f"https://www.nintendo.com{game['boxArt']}",
+            "box_art_url": f"https://www.nintendo.com{box_art}",
             "normal_price": f"${game['msrp']}",
             "percent_off": get_percent_off(game["msrp"], game["salePrice"]),
             "sale_price": f"${game['salePrice']}",
@@ -118,7 +121,11 @@ class Wishlist:
         queries[0]["params"] = query_params
         results = await client.multiple_queries_async(queries)
         return (
-            [self.get_switch_game(r) for r in results["results"][0]["hits"]],
+            [
+                self.get_switch_game(r)
+                for r in results["results"][0]["hits"]
+                if r.get("boxArt")
+            ],
             results["results"][0]["nbPages"],
         )
 
