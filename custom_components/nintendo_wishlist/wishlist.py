@@ -93,7 +93,7 @@ class Wishlist:
 
     async def fetch(self) -> List[SwitchGame]:
         """Fetch data about games that are on sale."""
-        return self.fetch_method()
+        return await self.fetch_method()
 
     def get_switch_game(self, game: Dict[str, Any]) -> SwitchGame:
         """Get a SwitchGame from a json result."""
