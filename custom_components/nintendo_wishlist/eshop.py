@@ -159,6 +159,7 @@ class EShop:
             }
         except Exception:
             _LOGGER.exception("Error getting eu game: %s", game)
+            raise
 
     async def fetch_eu(self) -> List[SwitchGame]:
         lang = COUNTRY_LANG[self.country]
@@ -174,7 +175,7 @@ class EShop:
         pricing: Dict[int, Dict[str, Any]] = {}
         params = {
             "country": self.country,
-            "ids": ",".join(nsuids),
+            "ids": ",".join([str(nsuid) for nsuid in nsuids]),
             "lang": "en",
         }
         async with self.session.get(EU_PRICE_URL, params=params) as r:
