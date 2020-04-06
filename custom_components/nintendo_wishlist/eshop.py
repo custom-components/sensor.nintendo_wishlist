@@ -153,7 +153,7 @@ class EShop:
         try:
             return {
                 "box_art_url": f"https:{game['image_url']}",
-                "nsuid": int(game["nsuid_text"][0]),
+                "nsuid": int(game["nsuid_txt"][0]),
                 "percent_off": game["price_discount_percentage_f"],
                 "title": game["title"],
             }
