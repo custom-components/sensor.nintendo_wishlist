@@ -30,6 +30,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Setup the sensor platform."""
+    _LOGGER.warning("setup config? %s", config)
     _LOGGER.warning("setup coordinator? %s", hass.data[DOMAIN])
     sensors = [
         NintendoWishlistSensor(hass, config, game) for game in config["wishlist"]
