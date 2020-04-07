@@ -7,7 +7,7 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
 
 from .const import CONF_COUNTRY, CONF_WISHLIST, DOMAIN
-from .eshop import Country, EShop, NA_COUNTRIES
+from .eshop import EShop, NA_COUNTRIES
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -17,11 +17,10 @@ DEFAULT_NAME = "Nintendo Wishlist Sensor"
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Setup the sensor platform."""
-    _LOGGER.warning("setup config? %s", config)
-    _LOGGER.warning("setup coordinator? %s", hass.data[DOMAIN])
-    wishlist = hass.data[DOMAIN]["conf"][CONF_WISHLIST]
-    sensors = [NintendoWishlistSensor(hass, config, game) for game in wishlist]
-    sensors.append(NintendoWishlistSensor(hass, hass.data[DOMAIN]["conf"]))
+    conf = hass.data[DOMAIN]["conf"]
+    wishlist = conf[CONF_WISHLIST]
+    sensors = [NintendoWishlistSensor(hass, conf, game) for game in wishlist]
+    sensors.append(NintendoWishlistSensor(hass, conf))
     async_add_entities(sensors, True)
 
 
@@ -42,8 +41,8 @@ class NintendoWishlistSensor(Entity):
 
     def __init__(self, hass, config, game: str = None):
         self.attrs = {}
-        self.country = config["country"].name
-        self.wishlist = [g.lower() for g in config["wishlist"]]
+        self.country = config[CONF_COUNTRY].name
+        self.wishlist = [g.lower() for g in config[CONF_WISHLIST]]
         self.session = async_get_clientsession(hass)
         self.game = None
         # This attribute holds the title before we lowercase it.

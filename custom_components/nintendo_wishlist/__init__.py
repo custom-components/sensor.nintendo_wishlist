@@ -37,7 +37,6 @@ async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
     :returns: A boolean to indicate that initialization was successful.
     """
     conf = config[DOMAIN]
-    _LOGGER.warning("async_setup conf: %s", conf)
     country = conf[CONF_COUNTRY]
     eshop = EShop(country, async_get_clientsession(hass))
     hass.data[DOMAIN] = {
