@@ -22,7 +22,10 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Required(CONF_COUNTRY): cv.enum(Country),
             }
         )
-    }
+    },
+    # The full HA configurations gets passed to `async_setup` so we need to allow
+    # extra keys.
+    extra=vol.ALLOW_EXTRA,
 )
 
 
@@ -38,7 +41,8 @@ async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
     country = conf[CONF_COUNTRY]
     eshop = EShop(country, async_get_clientsession(hass))
     hass.data[DOMAIN] = {
-        "coordinator": NintendoWishlistDataUpdateCoordinator(hass, eshop)
+        "conf": conf,
+        "coordinator": NintendoWishlistDataUpdateCoordinator(hass, eshop),
     }
     hass.async_create_task(
         hass.helpers.discovery.async_load_platform("sensor", DOMAIN, {}, conf)
