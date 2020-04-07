@@ -1,8 +1,5 @@
-import enum
 import logging
 import math
-from copy import copy
-from datetime import timedelta
 from typing import Any, Dict, List
 
 import voluptuous as vol
@@ -13,17 +10,13 @@ from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
 
+from .const import DOMAIN
 from .eshop import Country, EShop, NA_COUNTRIES
 
-__version__ = "2.2.0"
-DOMAIN = "nintendo_wishlist"
-
-DEFAULT_NAME = "Nintendo Wishlist Sensor"
-
-SCAN_INTERVAL = timedelta(minutes=10)
 
 _LOGGER = logging.getLogger(__name__)
 
+DEFAULT_NAME = "Nintendo Wishlist Sensor"
 
 CONF_COUNTRY = "country"
 CONF_WISHLIST = "wishlist"
@@ -37,6 +30,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Setup the sensor platform."""
+    _LOGGER.warning("setup coordinator? %s", hass.data[DOMAIN])
     sensors = [
         NintendoWishlistSensor(hass, config, game) for game in config["wishlist"]
     ]
