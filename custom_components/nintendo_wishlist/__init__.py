@@ -18,8 +18,8 @@ async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
     """
     country = config[DOMAIN][CONF_COUNTRY]
     eshop = EShop(country, async_get_clientsession(hass))
-    hass.data[DOMAIN]["coordinator"] = NintendoWishlistDataUpdateCoordinator(
-        hass, eshop
-    )
+    hass.data[DOMAIN] = {
+        "coordinator": NintendoWishlistDataUpdateCoordinator(hass, eshop)
+    }
     hass.helpers.discovery.async_load_platform("sensor", DOMAIN, {}, config)
     return True
