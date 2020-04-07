@@ -5,8 +5,8 @@ import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant import core
-from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.discovery import async_load_platform
 
 from .const import CONF_COUNTRY, CONF_WISHLIST, DOMAIN
 from .eshop import Country, EShop
@@ -44,7 +44,5 @@ async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
         "conf": conf,
         "coordinator": NintendoWishlistDataUpdateCoordinator(hass, eshop),
     }
-    hass.async_create_task(
-        hass.helpers.discovery.async_load_platform(hass, "sensor", DOMAIN, {}, conf)
-    )
+    hass.async_create_task(async_load_platform(hass, "sensor", DOMAIN, {}, conf))
     return True
