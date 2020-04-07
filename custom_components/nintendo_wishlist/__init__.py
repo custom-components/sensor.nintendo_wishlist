@@ -14,10 +14,14 @@ from .sensor_manager import NintendoWishlistDataUpdateCoordinator
 
 
 _LOGGER = logging.getLogger(__name__)
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
+CONFIG_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_WISHLIST): cv.ensure_list,
-        vol.Required(CONF_COUNTRY): cv.enum(Country),
+        DOMAIN: vol.Schema(
+            {
+                vol.Required(CONF_WISHLIST): cv.ensure_list,
+                vol.Required(CONF_COUNTRY): cv.enum(Country),
+            }
+        )
     }
 )
 
