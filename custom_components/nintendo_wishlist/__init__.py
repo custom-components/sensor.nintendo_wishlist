@@ -16,7 +16,7 @@ async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
 
     :returns: A boolean to indicate that initialization was successful.
     """
-    country = config[DOMAIN][CONF_COUNTRY].name
+    country = config[DOMAIN][CONF_COUNTRY]
     eshop = EShop(country, async_get_clientsession(hass))
     hass.data[DOMAIN]["coordinator"] = NintendoWishlistDataUpdateCoordinator(
         hass, eshop
