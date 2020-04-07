@@ -20,12 +20,6 @@ DEFAULT_NAME = "Nintendo Wishlist Sensor"
 
 CONF_COUNTRY = "country"
 CONF_WISHLIST = "wishlist"
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
-    {
-        vol.Required(CONF_WISHLIST): cv.ensure_list,
-        vol.Required(CONF_COUNTRY): cv.enum(Country),
-    }
-)
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
