@@ -29,18 +29,18 @@ CONFIG_SCHEMA = vol.Schema(
 async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
     """Set up the platform.
 
-    @NOTE: `config` is the full configuration dict, so to get values for this
-    compomnent you must reference the domain key.
+    @NOTE: `config` is the full dict from `configuration.yaml`.
 
     :returns: A boolean to indicate that initialization was successful.
     """
-    _LOGGER.warning("async_setup conf: %s", config)
-    country = config[CONF_COUNTRY]
+    conf = config[DOMAIN]
+    _LOGGER.warning("async_setup conf: %s", conf)
+    country = conf[CONF_COUNTRY]
     eshop = EShop(country, async_get_clientsession(hass))
     hass.data[DOMAIN] = {
         "coordinator": NintendoWishlistDataUpdateCoordinator(hass, eshop)
     }
     hass.async_create_task(
-        hass.helpers.discovery.async_load_platform("sensor", DOMAIN, {}, config)
+        hass.helpers.discovery.async_load_platform("sensor", DOMAIN, {}, conf)
     )
     return True

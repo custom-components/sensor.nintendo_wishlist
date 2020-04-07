@@ -2,11 +2,7 @@ import logging
 import math
 from typing import Any, Dict, List
 
-import voluptuous as vol
-
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-import homeassistant.helpers.config_validation as cv
-from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
 
