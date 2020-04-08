@@ -12,6 +12,6 @@ async def async_setup_platform(
     hass: core.HomeAssistant, config, async_add_entities, discovery_info=None
 ):
     """Setup the sensor platform."""
-    await hass.data[DOMAIN]["coordinator"].async_register_component(
+    await hass.data[DOMAIN]["sensor_manager"].async_register_component(
         "sensor", async_add_entities
     )
