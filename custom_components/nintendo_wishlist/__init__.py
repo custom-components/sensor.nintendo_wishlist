@@ -46,4 +46,5 @@ async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
         "sensor_manager": sensor_manager,
     }
     hass.async_create_task(async_load_platform(hass, "sensor", DOMAIN, {}, conf))
+    hass.async_create_task(async_load_platform(hass, "binary_sensor", DOMAIN, {}, conf))
     return True
