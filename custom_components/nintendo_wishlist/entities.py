@@ -39,7 +39,7 @@ class NintendoWishlistEntity(Entity):
     @property
     def state(self):
         """Return the state of the sensor."""
-        matches = self._parse_matches(list(self.coordinator.data.items()))
+        matches = self._parse_matches(list(self.coordinator.data.values()))
         self.attrs["on_sale"] = matches
 
         return len(matches)
