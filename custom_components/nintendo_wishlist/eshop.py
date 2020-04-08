@@ -93,7 +93,7 @@ class EShop:
         self.session = session
         self.fetch_method = self.fetch_na if country in NA_COUNTRIES else self.fetch_eu
 
-    async def fetch_on_sale(self) -> List[SwitchGame]:
+    async def fetch_on_sale(self) -> Dict[int, SwitchGame]:
         """Fetch data about games that are on sale."""
         return await self.fetch_method()
 
@@ -114,10 +114,10 @@ class EShop:
 
     async def _get_page(
         self, client: SearchClient, queries: list, page_num: int
-    ) -> Tuple[List[SwitchGame], int]:
+    ) -> Tuple[Dict[int, SwitchGame], int]:
         """Get all games for the provided page.
 
-        :returns: A tuple where the first item is the list of switch games and the 2nd
+        :returns: A tuple where the first item is the dict of switch games and the 2nd
             is the total number of pages of results.
         """
         params = queries[0]["params"]
@@ -125,28 +125,28 @@ class EShop:
         queries[0]["params"] = query_params
         results = await client.multiple_queries_async(queries)
         return (
-            [
-                self.get_na_switch_game(r)
+            {
+                int(r["nsuid"]): self.get_na_switch_game(r)
                 for r in results["results"][0]["hits"]
                 if r.get("boxArt")
-            ],
+            },
             results["results"][0]["nbPages"],
         )
 
-    async def fetch_na(self) -> List[SwitchGame]:
+    async def fetch_na(self) -> Dict[int, SwitchGame]:
         """Fetch data for North American countries."""
-        games: List[SwitchGame] = []
+        games: Dict[int, SwitchGame] = {}
         queries = copy.copy(QUERIES)
         queries[0]["indexName"] = NA_INDEX_NAMES[self.country]
         async with SearchClient.create(APP_ID, API_KEY) as client:
             # Sets the default page to 0, if there are more pages we'll fetch those
             # after we know how many there are.
             games_on_sale, num_pages = await self._get_page(client, queries, page_num=0)
-            games.extend(games_on_sale)
+            games.update(games_on_sale)
             if num_pages > 1:
                 for page_num in range(1, num_pages):
                     games_on_sale, _ = await self._get_page(client, queries, page_num)
-                    games.extend(games_on_sale)
+                    games.update(games_on_sale)
         return games
 
     def get_eu_switch_game(self, game: dict) -> SwitchGame:
@@ -161,14 +161,22 @@ class EShop:
             _LOGGER.exception("Error getting eu game: %s", game)
             raise
 
-    async def fetch_eu(self) -> List[SwitchGame]:
+    async def fetch_eu(self) -> Dict[int, SwitchGame]:
         lang = COUNTRY_LANG[self.country]
-        games: List[SwitchGame] = []
+        games: Dict[int, SwitchGame] = {}
         # NOTE: This endpoint requires the country to be lowercase.
         async with self.session.get(EU_SEARCH_URL.format(language=lang)) as resp:
             # The content-type is text/html so we need to specify None here.
             data = await resp.json(content_type=None)
-            games.extend([self.get_eu_switch_game(r) for r in data["response"]["docs"]])
+            games.update({
+                int(r["nsuid_txt"][0]: self.get_eu_switch_game(r)
+                for r in data["response"]["docs"]
+            })
+
+        # Add pricing data
+        pricing = self.get_eu_pricing_data(list(games.keys()))
+        for nsuid, item in pricing.items():
+            games[nsuid].update(item)
         return games
 
     async def get_eu_pricing_data(self, nsuids: List[int]):

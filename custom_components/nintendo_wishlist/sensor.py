@@ -1,110 +1,17 @@
 import logging
-import math
-from typing import Any, Dict, List
 
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.entity import Entity
-from homeassistant.util import slugify
+from homeassistant import core
 
-from .const import CONF_COUNTRY, CONF_WISHLIST, DOMAIN
-from .eshop import EShop, NA_COUNTRIES
+from .const import DOMAIN
 
 
 _LOGGER = logging.getLogger(__name__)
 
-DEFAULT_NAME = "Nintendo Wishlist Sensor"
 
-
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+async def async_setup_platform(
+    hass: core.HomeAssistant, config, async_add_entities, discovery_info=None
+):
     """Setup the sensor platform."""
-    conf = hass.data[DOMAIN]["conf"]
-    wishlist = conf[CONF_WISHLIST]
-    sensors = [NintendoWishlistSensor(hass, conf, game) for game in wishlist]
-    sensors.append(NintendoWishlistSensor(hass, conf))
-    async_add_entities(sensors, True)
-
-
-def get_percent_off(original_price: float, sale_price: float) -> int:
-    """Returns the percentage off of the sale price vs original price.
-
-    We round up and return an int.
-
-    :param original_price: The original price.
-    :param sale_price: The sale price.
-    :returns: The percentage as an int.
-    """
-    return 100 - math.ceil(100 / (original_price / sale_price))
-
-
-class NintendoWishlistSensor(Entity):
-    """Representation of a sensor."""
-
-    def __init__(self, hass, config, game: str = None):
-        self.attrs = {}
-        self.country = config[CONF_COUNTRY].name
-        self.wishlist = [g.lower() for g in config[CONF_WISHLIST]]
-        self.session = async_get_clientsession(hass)
-        self.game = None
-        # This attribute holds the title before we lowercase it.
-        self._game = None
-        if game is not None:
-            self._game = game
-            self.game = game.lower()
-            self.wishlist = [self.game]
-        self._state = None
-        self.eshop = EShop(self.country, self.session)
-
-    @property
-    def entity_id(self):
-        """Return the entity id of the sensor."""
-        if self.game:
-            return "sensor.nintendo_wishlist_{}".format(slugify(self.game))
-        return "sensor.nintendo_wishlist"
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        if self._game:
-            return self._game
-        return "Nintendo Wishlist"
-
-    @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement of this entity, if any."""
-        return "on sale"
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._state
-
-    @property
-    def icon(self):
-        """Icon to use in the frontend."""
-        return "mdi:nintendo-switch"
-
-    @property
-    def device_state_attributes(self):
-        return self.attrs
-
-    async def async_update(self):
-        """Get the latest data and updates the state."""
-        games = await self.eshop.fetch_on_sale()
-        games = self._parse_matches(games)
-        if self.country not in NA_COUNTRIES:
-            # We need to look up the pricing in a separate api call.
-            nsuids = [game["nsuid"] for game in games]
-            pricing = await self.eshop.get_eu_pricing_data(nsuids)
-            for game in games:
-                game["normal_price"] = pricing[game["nsuid"]]["normal_price"]
-                game["sale_price"] = pricing[game["nsuid"]]["sale_price"]
-        self.attrs["on_sale"] = games
-        self._state = len(games)
-
-    def _parse_matches(self, results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        matches: List[Dict[str, Any]] = []
-        for game in results:
-            if not game["title"].lower().startswith(tuple(self.wishlist)):
-                continue
-            matches.append(game)
-        return matches
+    await hass.data[DOMAIN]["coordinator"].async_register_component(
+        "sensor", async_add_entities
+    )
