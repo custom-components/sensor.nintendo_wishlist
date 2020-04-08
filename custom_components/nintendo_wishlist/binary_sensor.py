@@ -12,6 +12,7 @@ async def async_setup_platform(
     hass: core.HomeAssistant, config, async_add_entities, discovery_info=None
 ):
     """Setup the sensor platform."""
+    _LOGGER.warning("setting up binary sensor")
     await hass.data[DOMAIN]["sensor_manager"].async_register_component(
         "binary_sensor", async_add_entities
     )

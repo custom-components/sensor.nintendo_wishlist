@@ -90,6 +90,7 @@ class SensorManager:
 
         # All platforms are now registered for the component.
         # Add callback to update sensors when coordinator refreshes data.
+        _LOGGER.warning("registering components")
         self.coordinator.async_add_listener(self.async_update_items)
         # Fetch initial data.
         await self.coordinator.async_refresh()
@@ -97,6 +98,7 @@ class SensorManager:
     @callback
     def async_update_items(self):
         """Add or remove sensors based on coordinator data."""
+        _LOGGER.warning("async_update_items: %s", self._component_add_entities)
         if len(self._component_add_entities) < 2:
             # Haven't registered both `sensor` and `binary_sensor` platforms yet.
             return
