@@ -1,3 +1,5 @@
+import logging
+
 from typing import Any, Dict, List
 
 from homeassistant.components.binary_sensor import BinarySensorDevice
@@ -5,6 +7,9 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
 
 from .types import SwitchGame
+
+
+_LOGGER = logger.getLogger(__name__)
 
 
 class NintendoWishlistEntity(Entity):
@@ -55,8 +60,10 @@ class NintendoWishlistEntity(Entity):
         )
 
     def _parse_matches(self, results: List[SwitchGame]) -> List[SwitchGame]:
+        _LOGGER.warning("what is wishlist? %s", self.wishlist)
         matches: List[SwitchGame] = []
         for game in results:
+            _LOGGER.warning("what is game? %s", game)
             if not game["title"].lower().startswith(tuple(self.wishlist)):
                 continue
             matches.append(game)
