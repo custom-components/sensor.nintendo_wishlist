@@ -168,10 +168,12 @@ class EShop:
         async with self.session.get(EU_SEARCH_URL.format(language=lang)) as resp:
             # The content-type is text/html so we need to specify None here.
             data = await resp.json(content_type=None)
-            games.update({
-                int(r["nsuid_txt"][0]: self.get_eu_switch_game(r)
-                for r in data["response"]["docs"]
-            })
+            games.update(
+                {
+                    int(r["nsuid_txt"][0]): self.get_eu_switch_game(r)
+                    for r in data["response"]["docs"]
+                }
+            )
 
         # Add pricing data
         pricing = self.get_eu_pricing_data(list(games.keys()))
