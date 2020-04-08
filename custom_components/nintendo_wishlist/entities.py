@@ -9,7 +9,7 @@ from homeassistant.util import slugify
 from .types import SwitchGame
 
 
-_LOGGER = logger.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class NintendoWishlistEntity(Entity):
