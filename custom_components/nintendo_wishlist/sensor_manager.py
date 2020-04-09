@@ -107,8 +107,7 @@ class SensorManager:
 
         new_sensors: List[NintendoWishlistEntity] = []
         wishlist = self.hass.data[DOMAIN]["conf"]["wishlist"]
-        self.current_wishlist[WISHLIST_ID] = NintendoWishlistEntity(self, wishlist)
-        new_sensors.append(self.current_wishlist[WISHLIST_ID])
+        new_sensors.append(NintendoWishlistEntity(self, wishlist))
 
         new_binary_sensors: List[SwitchGameQueryEntity] = []
         for term in self.hass.data[DOMAIN]["conf"]["wishlist"]:
