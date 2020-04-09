@@ -9,7 +9,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import DOMAIN, SCAN_INTERVAL
 from .eshop import EShop
-from .entities import NintendoWishlistEntity
+from .entities import NintendoWishlistEntity, SwitchGameQueryEntity
 from .types import SwitchGame
 
 
@@ -77,7 +77,7 @@ class SensorManager:
         self.hass = hass
         self.coordinator = coordinator
         self._component_add_entities = {}
-        self.current_wishlist: Dict[int, SwitchGame] = {}
+        self.registered = False
 
     async def async_register_component(
         self, platform: str, async_add_entities: Callable
@@ -98,6 +98,8 @@ class SensorManager:
     @callback
     def async_update_items(self):
         """Add or remove sensors based on coordinator data."""
+        if self.registered:
+            return
         _LOGGER.warning("async_update_items: %s", self._component_add_entities)
         if len(self._component_add_entities) < 2:
             # Haven't registered both `sensor` and `binary_sensor` platforms yet.
@@ -109,18 +111,12 @@ class SensorManager:
             self.current_wishlist[WISHLIST_ID] = NintendoWishlistEntity(self, wishlist)
             new_sensors.append(self.current_wishlist[WISHLIST_ID])
 
-        # new_binary_sensors: List[SteamGameEntity] = []
-        # for game_id, game in self.coordinator.data.items():
-        #    existing = self.current_wishlist.get(game_id)
-        #    if existing is not None:
-        #        continue
-
-        #    # Found a new game that we will need to create a new binary_sensor for.
-        #    steam_game = get_steam_game(game_id, game)
-        #    self.current_wishlist[game_id] = SteamGameEntity(self, steam_game)
-        #    new_binary_sensors.append(self.current_wishlist[game_id])
+        new_binary_sensors: List[SwitchGameQueryEntity] = []
+        for term in self.hass.data[DOMAIN]["conf"]["wishlist"]:
+            new_binary_sensors.append(SwitchGameQueryEntity(self, term))
 
         if new_sensors:
             self._component_add_entities["sensor"](new_sensors)
-        # if new_binary_sensors:
-        #    self._component_add_entities["binary_sensor"](new_binary_sensors)
+        if new_binary_sensors:
+            self._component_add_entities["binary_sensor"](new_binary_sensors)
+        self.registered = True
