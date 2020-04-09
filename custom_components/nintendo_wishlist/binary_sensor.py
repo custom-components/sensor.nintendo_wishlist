@@ -19,7 +19,7 @@ async def async_setup_platform(
     _LOGGER.warning("setting up binary sensor")
     coordinator = hass.data[DOMAIN]["coordinator"]
     sensors = []
-    for term in self.hass.data[DOMAIN]["conf"]["wishlist"]:
+    for term in hass.data[DOMAIN]["conf"]["wishlist"]:
         sensors.append(SwitchGameQueryEntity(coordinator, term))
     async_add_entities(sensors, True)
 
