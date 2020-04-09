@@ -16,7 +16,6 @@ async def async_setup_platform(
     hass: core.HomeAssistant, config, async_add_entities, discovery_info=None
 ):
     """Setup the sensor platform."""
-    _LOGGER.warning("setting up binary sensor")
     coordinator = hass.data[DOMAIN]["coordinator"]
     sensors = []
     for term in hass.data[DOMAIN]["conf"]["wishlist"]:
@@ -51,7 +50,6 @@ class SwitchGameQueryEntity(BinarySensorDevice):
             if game["title"].lower().startswith(self.game_title.lower()):
                 matches.append(game)
         self.matches = matches
-        _LOGGER.warning("found %s matches for term %s", matches, self.game_title)
         return len(self.matches) > 0
 
     @property

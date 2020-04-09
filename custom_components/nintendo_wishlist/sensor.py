@@ -15,7 +15,6 @@ async def async_setup_platform(
     hass: core.HomeAssistant, config, async_add_entities, discovery_info=None
 ):
     """Setup the sensor platform."""
-    _LOGGER.warning("setting up sensor")
     coordinator = hass.data[DOMAIN]["coordinator"]
     wishlist = hass.data[DOMAIN]["conf"][CONF_WISHLIST]
     async_add_entities([NintendoWishlistEntity(coordinator, wishlist)], True)

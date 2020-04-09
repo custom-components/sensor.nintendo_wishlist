@@ -7,8 +7,9 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant import core
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.discovery import async_load_platform
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import CONF_COUNTRY, CONF_WISHLIST, DOMAIN
+from .const import CONF_COUNTRY, CONF_WISHLIST, DOMAIN, SCAN_INTERVAL
 from .eshop import Country, EShop
 from .sensor_manager import NintendoWishlistDataUpdateCoordinator
 
@@ -39,6 +40,19 @@ async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
     conf = config[DOMAIN]
     country = conf[CONF_COUNTRY].name
     eshop = EShop(country, async_get_clientsession(hass))
+    coordinator = DataUpdateCoordinator(
+        hass,
+        _LOGGER,
+        # Name of the data. For logging purposes.
+        name=DOMAIN,
+        update_method=eshop.fetch_on_sale,
+        # Polling interval. Will only be polled if there are subscribers.
+        update_interval=SCAN_INTERVAL,
+    )
+
+    # Fetch initial data so we have data when entities subscribe
+    await coordinator.async_refresh()
+
     coordinator = NintendoWishlistDataUpdateCoordinator(hass, eshop)
     await coordinator.async_refresh()
     hass.data[DOMAIN] = {
