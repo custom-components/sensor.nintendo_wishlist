@@ -10,7 +10,7 @@ from homeassistant.helpers.discovery import async_load_platform
 
 from .const import CONF_COUNTRY, CONF_WISHLIST, DOMAIN
 from .eshop import Country, EShop
-from .sensor_manager import NintendoWishlistDataUpdateCoordinator, SensorManager
+from .sensor_manager import NintendoWishlistDataUpdateCoordinator
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,10 +40,10 @@ async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
     country = conf[CONF_COUNTRY].name
     eshop = EShop(country, async_get_clientsession(hass))
     coordinator = NintendoWishlistDataUpdateCoordinator(hass, eshop)
-    sensor_manager = SensorManager(hass, coordinator)
+    await coordinator.async_refresh()
     hass.data[DOMAIN] = {
         "conf": conf,
-        "sensor_manager": sensor_manager,
+        "coordinator": coordinator,
     }
     hass.async_create_task(async_load_platform(hass, "sensor", DOMAIN, {}, conf))
     hass.async_create_task(async_load_platform(hass, "binary_sensor", DOMAIN, {}, conf))
