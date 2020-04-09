@@ -94,7 +94,7 @@ class SwitchGameQueryEntity(BaseEntity, BinarySensorDevice):
     def entity_id(self) -> str:
         """Return the entity id of the sensor."""
         slug = slugify(self.game_title)
-        return f"binary_sensor.steam_wishlist_{slug}"
+        return f"binary_sensor.nintendo_wishlist_{slug}"
 
     @property
     def name(self) -> str:
