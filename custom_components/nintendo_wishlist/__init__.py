@@ -52,8 +52,6 @@ async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
     # Fetch initial data so we have data when entities subscribe
     await coordinator.async_refresh()
 
-    coordinator = NintendoWishlistDataUpdateCoordinator(hass, eshop)
-    await coordinator.async_refresh()
     hass.data[DOMAIN] = {
         "conf": conf,
         "coordinator": coordinator,
