@@ -11,7 +11,6 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import CONF_COUNTRY, CONF_WISHLIST, DOMAIN, SCAN_INTERVAL
 from .eshop import Country, EShop
-from .sensor_manager import NintendoWishlistDataUpdateCoordinator
 
 
 _LOGGER = logging.getLogger(__name__)
