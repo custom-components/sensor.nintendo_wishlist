@@ -88,9 +88,15 @@ def get_percent_off(original_price: float, sale_price: float) -> int:
 class EShop:
     """Encapsulates logic for retrieving eshop data for countries."""
 
-    def __init__(self, country: Country, session: aiohttp.ClientSession):
+    def __init__(
+        self,
+        country: Country,
+        session: aiohttp.ClientSession,
+        wishlist_terms: List[str],
+    ):
         self.country = country
         self.session = session
+        self.wishlist_terms = wishlist_terms
         self.fetch_method = self.fetch_na if country in NA_COUNTRIES else self.fetch_eu
 
     async def fetch_on_sale(self) -> Dict[int, SwitchGame]:
@@ -176,7 +182,7 @@ class EShop:
             )
 
         # Add pricing data
-        pricing = self.get_eu_pricing_data(list(games.keys()))
+        pricing = await self.get_eu_pricing_data(list(games.keys()))
         for nsuid, item in pricing.items():
             games[nsuid].update(item)
         return games

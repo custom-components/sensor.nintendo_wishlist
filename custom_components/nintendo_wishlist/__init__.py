@@ -38,7 +38,8 @@ async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
     """
     conf = config[DOMAIN]
     country = conf[CONF_COUNTRY].name
-    eshop = EShop(country, async_get_clientsession(hass))
+    wishlist = conf[CONF_WISHLIST]
+    eshop = EShop(country, async_get_clientsession(hass), wishlist)
     coordinator = DataUpdateCoordinator(
         hass,
         _LOGGER,
