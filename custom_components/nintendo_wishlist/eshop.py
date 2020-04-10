@@ -174,7 +174,7 @@ class EShop:
         async with self.session.get(EU_SEARCH_URL.format(language=lang)) as resp:
             # The content-type is text/html so we need to specify None here.
             data = await resp.json(content_type=None)
-            games.update(self.parse_wishlist_matches(data["response"]["docs"]))
+            games.update(self.filter_wishlist_matches(data["response"]["docs"]))
 
         # Add pricing data
         _LOGGER.warning("num matches: %s", len(games))
@@ -183,10 +183,11 @@ class EShop:
             games[nsuid].update(item)
         return games
 
-    def parse_wishlist_matches(self, results: Dict[str, Any]) -> Dict[int, SwitchGame]:
+    def filter_wishlist_matches(self, results: Dict[str, Any]) -> Dict[int, SwitchGame]:
+        """Filter wishlist matches from a list of games on sale."""
         matches: Dict[int, SwitchGame] = {}
         for game in results:
-            if not game["title"].lower().startswith(tuple(self.wishlist)):
+            if not game["title"].lower().startswith(tuple(self.wishlist_terms)):
                 continue
             switch_game = self.get_eu_switch_game(game)
             matches[switch_game["nsuid"]] = switch_game
