@@ -1,11 +1,9 @@
 import logging
-from typing import List
 
 from homeassistant import core
 from homeassistant.helpers.entity import Entity
 
-from .const import CONF_WISHLIST, DOMAIN
-from .types import SwitchGame
+from .const import DOMAIN
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -16,17 +14,15 @@ async def async_setup_platform(
 ):
     """Setup the sensor platform."""
     coordinator = hass.data[DOMAIN]["coordinator"]
-    wishlist = hass.data[DOMAIN]["conf"][CONF_WISHLIST]
-    async_add_entities([NintendoWishlistEntity(coordinator, wishlist)], True)
+    async_add_entities([NintendoWishlistEntity(coordinator)], True)
 
 
 class NintendoWishlistEntity(Entity):
     """Representation of a sensor."""
 
-    def __init__(self, coordinator, wishlist: List[str]):
+    def __init__(self, coordinator):
         self.attrs = {}
         self.coordinator = coordinator
-        self.wishlist = [g.lower() for g in wishlist]
         self._state = 0
 
     @property
@@ -52,19 +48,10 @@ class NintendoWishlistEntity(Entity):
     @property
     def state(self):
         """Return the state of the sensor."""
-        matches = self._parse_matches(list(self.coordinator.data.values()))
+        matches = list(self.coordinator.data.values())
         self.attrs["on_sale"] = matches
-
         return len(matches)
 
     @property
     def device_state_attributes(self):
         return self.attrs
-
-    def _parse_matches(self, results: List[SwitchGame]) -> List[SwitchGame]:
-        matches: List[SwitchGame] = []
-        for game in results:
-            if not game["title"].lower().startswith(tuple(self.wishlist)):
-                continue
-            matches.append(game)
-        return matches

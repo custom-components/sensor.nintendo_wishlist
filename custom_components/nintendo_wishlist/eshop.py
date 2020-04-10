@@ -86,7 +86,7 @@ def get_percent_off(original_price: float, sale_price: float) -> int:
 
 
 class EShop:
-    """Encapsulates logic for retrieving eshop data for countries."""
+    """Encapsulates logic for retrieving eshop sale data for countries."""
 
     def __init__(
         self,
