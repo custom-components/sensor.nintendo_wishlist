@@ -130,12 +130,10 @@ class EShop:
         query_params: str = f"{params}&page={page_num}"
         queries[0]["params"] = query_params
         results = await client.multiple_queries_async(queries)
+        # Filter out resuls w/o box art.
+        games = [r for r in results["results"][0]["hits"] if r.get("boxArt")]
         return (
-            {
-                int(r["nsuid"]): self.get_na_switch_game(r)
-                for r in results["results"][0]["hits"]
-                if r.get("boxArt")
-            },
+            self.filter_wishlist_matches(games),
             results["results"][0]["nbPages"],
         )
 
@@ -177,7 +175,6 @@ class EShop:
             games.update(self.filter_wishlist_matches(data["response"]["docs"]))
 
         # Add pricing data
-        _LOGGER.warning("num matches: %s", len(games))
         pricing = await self.get_eu_pricing_data(list(games.keys()))
         for nsuid, item in pricing.items():
             games[nsuid].update(item)
@@ -189,11 +186,15 @@ class EShop:
         for game in results:
             if not game["title"].lower().startswith(tuple(self.wishlist_terms)):
                 continue
-            switch_game = self.get_eu_switch_game(game)
+            if self.country in NA_COUNTRIES:
+                switch_game = self.get_na_switch_game(game)
+            else:
+                switch_game = self.get_eu_switch_game(game)
             matches[switch_game["nsuid"]] = switch_game
         return matches
 
     async def get_eu_pricing_data(self, nsuids: List[int]):
+        """Get EU pricing data for a list of nsuids."""
         pricing: Dict[int, Dict[str, Any]] = {}
         params = {
             "country": self.country,
@@ -202,7 +203,6 @@ class EShop:
         }
         async with self.session.get(EU_PRICE_URL, params=params) as r:
             prices = await r.json()
-            _LOGGER.warning("what are prices: %s", prices)
             for price in prices["prices"]:
                 n_id = price["title_id"]
                 pricing[n_id] = {
