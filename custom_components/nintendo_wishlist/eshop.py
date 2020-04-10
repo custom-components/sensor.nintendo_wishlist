@@ -186,7 +186,7 @@ class EShop:
     def parse_wishlist_matches(self, results: Dict[str, Any]) -> Dict[int, SwitchGame]:
         matches: Dict[int, SwitchGame] = {}
         for game in results:
-            if not game["title"].lower().starswith(tuple(self.wishlist)):
+            if not game["title"].lower().startswith(tuple(self.wishlist)):
                 continue
             switch_game = self.get_eu_switch_game(game)
             matches[switch_game["nsuid"]] = switch_game
