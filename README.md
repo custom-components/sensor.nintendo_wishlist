@@ -1,12 +1,15 @@
 # Nintendo Wishlist Component
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
+[![](https://img.shields.io/github/release/custom-components/sensor.nintendo_wishlist/all.svg?style=for-the-badge)](https://github.com/boralyl/steam-wishlist/releases)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
+[![](https://img.shields.io/github/license/custom-components/sensor.nintendo_wishlist?style=for-the-badge)](LICENSE)
 
-## NOTE: This component currently only works in certain countries.  See [Supported Countries](#supported-countries) below.
+### NOTE: This component currently only works in certain countries.  See [Supported Countries](#supported-countries) below.
 
 Home Assistant component that keeps track of Nintendo Switch games that are on
-sale on your wish list in home assistant. (There is currently not a way to get your
-wish list from Nintendo, so you have to keep track of it in this component.)
+sale on your wish list in home assistant. (There is currently not an easy way to
+get your wish list from Nintendo, so you have to keep track of it in this
+component.)
 
 [![nitendo wishlist card](https://raw.githubusercontent.com/custom-cards/nintendo-wishlist-card/master/cover-art.png)](https://raw.githubusercontent.com/custom-cards/nintendo-wishlist-card/master/cover-art.png)
 
@@ -16,31 +19,34 @@ wish list from Nintendo, so you have to keep track of it in this component.)
 2. Add the code to your `configuration.yaml` using the config options below.
 3. **You will need to restart after installation for the component to start working.**
 4. Display it in your lovelace UI using the [nintendo-wishlist-card](https://github.com/custom-cards/nintendo-wishlist-card).
+5. Create an automation to notify you when a game on your wishlist goes on sale.
 
-## Platform Configuration
+## Configuration
 
 |Name|Required|Description|
 |-|-|-|
 |country|yes|The 2 letter country code.  See [Supported Countries](#supported-countries) below.|
 |wishlist|yes|A list of Nintendo Switch titles|
 
-## Sample Sensor Configuration
+## Sample Configuration
 
 *Note:* If the title contains characters that might confuse yaml like a `:` or `'` quote the entire string
-like the last game in the example below.
+like the last game in the example below.  If you do not do this your yaml may
+become invalid.
 
-    sensor:
-    - platform: nintendo_wishlist
-      country: US
-      wishlist:
-        - Katana ZERO
-        - OKAMI HD
-        - Salt and Sanctuary
-        - Dead Cells
-        - Bloodstained
-        - Dark Souls
-        - Velocity X
-        - "The Legend of Zelda: Breath of the Wild"
+```yaml
+nintendo_wishlist:
+  country: US
+  wishlist:
+    - Katana ZERO
+    - OKAMI HD
+    - Salt and Sanctuary
+    - Dead Cells
+    - Bloodstained
+    - Dark Souls
+    - Velocity X
+    - "The Legend of Zelda: Breath of the Wild"
+```
 
 ### Supported Countries
 
@@ -74,20 +80,53 @@ you can specify less of the title.  An example of this would be to add an item
 to your wishlist like `Shantae`.  This would match any of the Shantae titles on
 the e-shop (e.g. `Shantae and the Pirate's Curse` and `Shantae: Half-Genie Hero`.
 
-### Sensors for Automations
+### Sensors
 
-When the custom component is run it will create a new sensor named `sensor.nintendo_wishlist`.
-It's state will be the total number of games from your wish list that are on sale.
-This sensor can be used with the [custom card](https://github.com/custom-cards/nintendo-wishlist-card).
+After you successfully setup the integration a number of sesnors will be created.
 
-The component will additionally create a sensor per title in your wish list.  These
-will be named `sensor.nintendo_wishlist_{title_name}`.  For example Mega Man 11
-would be `sensor.nintendo_wishlist_mega_man_11`.  The state of each sensor will
-be `0` if it is not on sale and `1` if it is on sale.  You can use these sensors
-in your automations to send notifications, blink your lights, or any other
-automation you would like to do when a title on your wish list goes on sale.
+#### `sensor.nintendo_wishlist`
 
-[![example sensors](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/master/sensors.png)](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/master/sensors.png)
+This sensor will report the number of games on sale from your wishlist.
+This sensor can be used with the [Nintendo Wishlist Custom Card](https://github.com/custom-cards/nintendo-wishlist-card).
+
+[![sensor.nintendo_wishlist](./assets/sensor.nintendo_wishlist.png)](./assets/sensor.nintendo_wishlist.png)
+
+#### Attributes
+
+The following state attributes are available for this sensor:
+
+|attribute|description|
+|-|-|
+|on_sale|An array of [games on sale](#game-on-sale-object).|
+
+#### Game on Sale Object
+
+This object represents a single Nintendo Switch game on sale.
+
+|attribute|description|
+|-|-|
+|box_art_url|The URL for the box art of the game.|
+|normal_price|The normal price of the game.|
+|nsuid|The Nintendo Switch unique ID of the game.|
+|percent_off|The percentage off of the normal price.|
+|sale_price|The sale price of the game.|
+|title|The title of the game.|
+
+#### `sensor.nintendo_wishlist_<title>`
+
+A binary sensor will be created for each game on your wishlist.  It's state will
+indicate if it is on sale or not.
+
+[![sensor.nintendo_wishlist_the_touryst](./assets/sensor.nintendo_wishlist_the_touryst.png)](./assets/sensor.nintendo_wishlist_the_touryst.png)
+
+#### Attributes
+
+The following state attributes are available for this sensor:
+
+|attribute|description|
+|-|-|
+|matches|An array of [games on sale](#game-on-sale-object) that matched your wishlist search term.|
+
 
 #### Example NodeRed Flow
 
