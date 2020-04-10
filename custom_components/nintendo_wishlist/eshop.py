@@ -96,7 +96,7 @@ class EShop:
     ):
         self.country = country
         self.session = session
-        self.wishlist_terms = wishlist_terms
+        self.wishlist_terms = [term.lower() for term in wishlist_terms]
         self.fetch_method = self.fetch_na if country in NA_COUNTRIES else self.fetch_eu
 
     async def fetch_on_sale(self) -> Dict[int, SwitchGame]:
@@ -174,18 +174,23 @@ class EShop:
         async with self.session.get(EU_SEARCH_URL.format(language=lang)) as resp:
             # The content-type is text/html so we need to specify None here.
             data = await resp.json(content_type=None)
-            games.update(
-                {
-                    int(r["nsuid_txt"][0]): self.get_eu_switch_game(r)
-                    for r in data["response"]["docs"]
-                }
-            )
+            games.update(self.parse_wishlist_matches(data["response"]["docs"]))
 
         # Add pricing data
+        _LOGGER.warning("num matches: %s", len(games))
         pricing = await self.get_eu_pricing_data(list(games.keys()))
         for nsuid, item in pricing.items():
             games[nsuid].update(item)
         return games
+
+    def parse_wishlist_matches(self, results: Dict[str, Any]) -> Dict[int, SwitchGame]:
+        matches: Dict[int, SwitchGame] = {}
+        for game in results:
+            if not game["title"].lower().starswith(tuple(self.wishlist)):
+                continue
+            switch_game = self.get_eu_switch_game(game)
+            matches[switch_game["nsuid"]] = switch_game
+        return matches
 
     async def get_eu_pricing_data(self, nsuids: List[int]):
         pricing: Dict[int, Dict[str, Any]] = {}
