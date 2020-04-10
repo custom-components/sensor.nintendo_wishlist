@@ -196,6 +196,7 @@ class EShop:
         }
         async with self.session.get(EU_PRICE_URL, params=params) as r:
             prices = await r.json()
+            _LOGGER.warning("what are prices: %s", prices)
             for price in prices["prices"]:
                 n_id = price["title_id"]
                 pricing[n_id] = {
