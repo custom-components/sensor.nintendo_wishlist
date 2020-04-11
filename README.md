@@ -4,7 +4,9 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 [![](https://img.shields.io/github/license/custom-components/sensor.nintendo_wishlist?style=for-the-badge)](LICENSE)
 
-#### NOTE: This component currently only works in certain countries.  See [Supported Countries](#supported-countries) below.
+> **_NOTE:_** This component currently only works in certain countries.  See [Supported Countries](#supported-countries) below.
+
+> **_Migrating to v3?_** See the [migration guide](./MIGRATION_TO_V3.md).
 
 Home Assistant component that keeps track of Nintendo Switch games that are on
 sale on your wish list in home assistant.
