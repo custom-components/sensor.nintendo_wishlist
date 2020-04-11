@@ -11,8 +11,6 @@ sale on your wish list in home assistant. (There is currently not an easy way to
 get your wish list from Nintendo, so you have to keep track of it in this
 component.)
 
-[![nitendo wishlist card](https://raw.githubusercontent.com/custom-cards/nintendo-wishlist-card/master/cover-art.png)](https://raw.githubusercontent.com/custom-cards/nintendo-wishlist-card/master/cover-art.png)
-
 ## HACS Installation
 
 1. Search for `Nintendo Wishlist Component` in the HACS Store tab.
@@ -26,7 +24,7 @@ component.)
 |Name|Required|Description|
 |-|-|-|
 |country|yes|The 2 letter country code.  See [Supported Countries](#supported-countries) below.|
-|wishlist|yes|A list of Nintendo Switch titles|
+|wishlist|yes|A list of Nintendo Switch titles. Each item can be the exact title or just the beginning of a title in order to match multiple games.  For example `Shantae` would trigger when any one of the many `Shantae` games goes on sale.  Read [how wishlist matching works](#how-wish-list-matching-works) below.
 
 ## Sample Configuration
 
