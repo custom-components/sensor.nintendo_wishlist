@@ -19,7 +19,7 @@ component.)
 2. Add the code to your `configuration.yaml` using the config options below.
 3. **You will need to restart after installation for the component to start working.**
 4. Display it in your lovelace UI using the [nintendo-wishlist-card](https://github.com/custom-cards/nintendo-wishlist-card).
-5. Create an automation to notify you when a game on your wishlist goes on sale.
+5. Create an [automation to notify you](#example-node-red-flow) when a game on your wishlist goes on sale.
 
 ## Configuration
 
@@ -128,10 +128,11 @@ The following state attributes are available for this sensor:
 |matches|An array of [games on sale](#game-on-sale-object) that matched your wishlist search term.|
 
 
-#### Example NodeRed Flow
+#### Example Node-RED Flow
 
-You can import an [example of a node-red flow](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/master/example_node_red_flow.json) that sends an alert to kodi when
-a game on your wish list is on sale.  You can use the inject node to test the
+You can import an [example of a node-red flow](./assets/flow.json) that sends a
+notification when an item on your wish list produces an on sale match.  The flow
+will send a notification for each match. You can use the inject node to test the
 flow and customize it to your preferences.
 
-[![example nodered flow](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/master/example_node_red_flow.png)](https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/master/example_node_red_flow.png)
+[![Node-RED Flow](./assets/node-red-flow.png)](./assets/node-red-flow.png)

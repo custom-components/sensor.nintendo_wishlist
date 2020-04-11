@@ -1,0 +1,120 @@
+[
+    {
+        "id": "309b5de9.ba0a12",
+        "type": "api-call-service",
+        "z": "2e948d2d.6eacca",
+        "name": "Send Notification",
+        "server": "b454cc2c.3067b",
+        "service_domain": "notify",
+        "service": "mobile_app_pixel_2",
+        "data": "{\"title\":\"{{payload.title}} on sale!\",\"message\":\"{{payload.title}} is now {{payload.percent_off}}% off.  Pick it up now for {{payload.sale_price}}.\",\"data\":{\"image\":\"{{payload.box_art_url}}\"}}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "x": 1030,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1bd9c4d8.1c5843",
+        "type": "split",
+        "z": "2e948d2d.6eacca",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 790,
+        "y": 120,
+        "wires": [
+            [
+                "309b5de9.ba0a12"
+            ]
+        ]
+    },
+    {
+        "id": "794c2c28.cbf49c",
+        "type": "function",
+        "z": "2e948d2d.6eacca",
+        "name": "Set Payload to matches",
+        "func": "msg.payload = msg.data.event.new_state.attributes.matches;\nvar date = new Date().toLocaleDateString('en-US', {\n            month: 'short',\n            day: 'numeric',\n            hour12: false,\n            hour: 'numeric',\n            minute: 'numeric'\n        })\n// Get array of titles from each match.\nvar gameTitles = msg.payload.map(m => m[\"title\"]);\n// Convert array to a string we can display.\nvar games = gameTitles.join(\", \")\nvar statusText = `${games} at: ${date}`\nnode.status({fill:\"green\",shape:\"dot\",text: statusText});\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 590,
+        "y": 120,
+        "wires": [
+            [
+                "1bd9c4d8.1c5843"
+            ]
+        ]
+    },
+    {
+        "id": "beaec501.8dd3a8",
+        "type": "trigger-state",
+        "z": "2e948d2d.6eacca",
+        "name": "Nintendo Wish List State Change",
+        "server": "b454cc2c.3067b",
+        "entityid": "binary_sensor.nintendo_wishlist_",
+        "entityidfiltertype": "substring",
+        "debugenabled": false,
+        "constraints": [],
+        "constraintsmustmatch": "all",
+        "outputs": 2,
+        "customoutputs": [],
+        "outputinitially": false,
+        "state_type": "habool",
+        "x": 300,
+        "y": 120,
+        "wires": [
+            [
+                "794c2c28.cbf49c"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "9576a0d4.4f37b",
+        "type": "inject",
+        "z": "2e948d2d.6eacca",
+        "name": "",
+        "topic": "",
+        "payload": "{\"entity_id\":\"binary_sensor.nintendo_wishlist_steam\",\"old_state\":{\"entity_id\":\"binary_sensor.nintendo_wishlist_steam\",\"state\":false,\"attributes\":{\"matches\":[],\"unit_of_measurement\":\"on sale\",\"friendly_name\":\"Steam\",\"icon\":\"mdi:nintendo-switch\"},\"last_changed\":\"2019-08-18T17:54:11.703879+00:00\",\"last_updated\":\"2019-08-18T17:54:11.703879+00:00\",\"context\":{\"id\":\"b4cd91ecaa6748db95b29714607018c0\",\"parent_id\":null,\"user_id\":null}},\"new_state\":{\"entity_id\":\"binary_sensor.nintendo_wishlist_steam\",\"state\":true,\"attributes\":{\"matches\":[{\"box_art_url\":\"https://www.nintendo.com/content/dam/noa/en_US/games/switch/s/steamworld-quest-hand-of-gilgamech-switch/Switch_SteamWorldQuest_box_eShop.png\",\"normal_price\":\"$24.99\",\"percent_off\":20,\"sale_price\":\"$19.99\",\"title\":\"SteamWorld Quest: Hand of Gilgamech\"},{\"box_art_url\":\"https://www.nintendo.com/content/dam/noa/en_US/games/switch/s/steamworld-quest-hand-of-gilgamech-switch/Switch_SteamWorldQuest_box_eShop.png\",\"normal_price\":\"$49.99\",\"percent_off\":50,\"sale_price\":\"$19.99\",\"title\":\"SteamWorld Game\"}],\"unit_of_measurement\":\"on sale\",\"friendly_name\":\"Steam\",\"icon\":\"mdi:nintendo-switch\"},\"last_changed\":\"2019-08-18T17:54:11.703879+00:00\",\"last_updated\":\"2019-08-18T17:54:11.703879+00:00\",\"context\":{\"id\":\"b4cd91ecaa6748db95b29714607018c0\",\"parent_id\":null,\"user_id\":null}}}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 90,
+        "y": 120,
+        "wires": [
+            [
+                "beaec501.8dd3a8"
+            ]
+        ]
+    },
+    {
+        "id": "6c7bb007.fa8f",
+        "type": "comment",
+        "z": "2e948d2d.6eacca",
+        "name": "Nintendo E-Shop Sale Alerts",
+        "info": "",
+        "x": 140,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "b454cc2c.3067b",
+        "type": "server",
+        "z": "",
+        "name": "Home Assistant",
+        "legacy": false,
+        "hassio": false,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true
+    }
+]
