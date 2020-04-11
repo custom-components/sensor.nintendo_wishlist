@@ -4,12 +4,10 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 [![](https://img.shields.io/github/license/custom-components/sensor.nintendo_wishlist?style=for-the-badge)](LICENSE)
 
-### NOTE: This component currently only works in certain countries.  See [Supported Countries](#supported-countries) below.
+#### NOTE: This component currently only works in certain countries.  See [Supported Countries](#supported-countries) below.
 
 Home Assistant component that keeps track of Nintendo Switch games that are on
-sale on your wish list in home assistant. (There is currently not an easy way to
-get your wish list from Nintendo, so you have to keep track of it in this
-component.)
+sale on your wish list in home assistant.
 
 ## HACS Installation
 
@@ -30,13 +28,14 @@ component.)
 
 *Note:* If the title contains characters that might confuse yaml like a `:` or `'` quote the entire string
 like the last game in the example below.  If you do not do this your yaml may
-become invalid.
+be invalid in your configuration file.
 
 ```yaml
 nintendo_wishlist:
   country: US
   wishlist:
     - Katana ZERO
+    - Shantae
     - OKAMI HD
     - Salt and Sanctuary
     - Dead Cells
@@ -80,7 +79,7 @@ the e-shop (e.g. `Shantae and the Pirate's Curse` and `Shantae: Half-Genie Hero`
 
 ### Sensors
 
-After you successfully setup the integration a number of sesnors will be created.
+After you successfully setup the integration a number of sensors will be created.
 
 #### `sensor.nintendo_wishlist`
 
