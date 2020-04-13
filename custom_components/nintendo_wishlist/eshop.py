@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Tuple
 import aiohttp
 from algoliasearch.search_client import SearchClient
 
-from .types import SwitchGame
+from .types import ResultsDict, SwitchGame
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -59,7 +59,8 @@ class Country(enum.Enum):
 
 
 # These are specific to European countries.
-EU_SEARCH_URL = "https://searching.nintendo-europe.com/{language}/select?q=*&fq=type%3AGAME%20AND%20((playable_on_txt%3A%22HAC%22)%20AND%20(price_has_discount_b%3A%22true%22))%20AND%20sorting_title%3A*%20AND%20*%3A*&sort=price_discount_percentage_f%20desc%2C%20price_lowest_f%20desc&start=0&rows=500&wt=json&bf=linear(ms(priority%2CNOW%2FHOUR)%2C1.1e-11%2C0)"  # noqa
+# NOTE: This endpoint requires the language to be lowercase.
+EU_SEARCH_URL = "https://searching.nintendo-europe.com/{language}/select?q=*&fq=type%3AGAME%20AND%20((playable_on_txt%3A%22HAC%22)%20AND%20(price_has_discount_b%3A%22true%22))%20AND%20sorting_title%3A*%20AND%20*%3A*&sort=price_discount_percentage_f%20desc%2C%20price_lowest_f%20desc&start={start}&rows=500&wt=json&bf=linear(ms(priority%2CNOW%2FHOUR)%2C1.1e-11%2C0)"  # noqa
 EU_PRICE_URL = "https://api.ec.nintendo.com/v1/price"
 
 # Below constants used by North America (US and CA)
@@ -119,23 +120,24 @@ class EShop:
         }
 
     async def _get_page(
-        self, client: SearchClient, queries: list, page_num: int
-    ) -> Tuple[Dict[int, SwitchGame], int]:
+        self, client: SearchClient, queries: list, page_num: int = 0
+    ) -> ResultsDict:
         """Get all games for the provided page.
 
         :returns: A tuple where the first item is the dict of switch games and the 2nd
             is the total number of pages of results.
         """
+        game_results: Dict[int, SwitchGame] = {}
+        result: ResultsDict = {"games": game_results, "num_pages": 1}
         params = queries[0]["params"]
         query_params: str = f"{params}&page={page_num}"
         queries[0]["params"] = query_params
-        results = await client.multiple_queries_async(queries)
+        data = await client.multiple_queries_async(queries)
         # Filter out resuls w/o box art.
-        games = [r for r in results["results"][0]["hits"] if r.get("boxArt")]
-        return (
-            self.filter_wishlist_matches(games),
-            results["results"][0]["nbPages"],
-        )
+        games = [r for r in data["results"][0]["hits"] if r.get("boxArt")]
+        result["games"] = self.filter_wishlist_matches(games)
+        result["num_pages"] = data["results"][0]["nbPages"]
+        return result
 
     async def fetch_na(self) -> Dict[int, SwitchGame]:
         """Fetch data for North American countries."""
@@ -145,13 +147,32 @@ class EShop:
         async with SearchClient.create(APP_ID, API_KEY) as client:
             # Sets the default page to 0, if there are more pages we'll fetch those
             # after we know how many there are.
-            games_on_sale, num_pages = await self._get_page(client, queries, page_num=0)
-            games.update(games_on_sale)
-            if num_pages > 1:
-                for page_num in range(1, num_pages):
-                    games_on_sale, _ = await self._get_page(client, queries, page_num)
-                    games.update(games_on_sale)
+            results = await self._get_page(client, queries)
+            games.update(results["games"])
+            if results["num_pages"] > 1:
+                for page_num in range(1, results["num_pages"]):
+                    results = await self._get_page(client, queries, page_num)
+                    games.update(results["games"])
         return games
+
+    async def _get_eu_page(self, page: int = 0) -> ResultsDict:
+        """Get all games on sale for the provided page."""
+        games: Dict[int, SwitchGame] = {}
+        result: ResultsDict = {"games": games, "num_pages": 1}
+
+        # 1st page starts at 0, 2nd page starts at 500, etc.
+        start = page * 500
+        lang = COUNTRY_LANG[self.country]
+        url = EU_SEARCH_URL.format(start=start, language=lang)
+        async with self.session.get(url) as resp:
+            # The content-type is text/html so we need to specify None here.
+            data = await resp.json(content_type=None)
+            result["num_pages"] = math.ceil(data["response"]["numFound"] / 500)
+            result["games"].update(
+                self.filter_wishlist_matches(data["response"]["docs"])
+            )
+
+        return result
 
     def get_eu_switch_game(self, game: dict) -> SwitchGame:
         try:
@@ -166,13 +187,14 @@ class EShop:
             raise
 
     async def fetch_eu(self) -> Dict[int, SwitchGame]:
-        lang = COUNTRY_LANG[self.country]
         games: Dict[int, SwitchGame] = {}
-        # NOTE: This endpoint requires the country to be lowercase.
-        async with self.session.get(EU_SEARCH_URL.format(language=lang)) as resp:
-            # The content-type is text/html so we need to specify None here.
-            data = await resp.json(content_type=None)
-            games.update(self.filter_wishlist_matches(data["response"]["docs"]))
+
+        results = await self._get_eu_page()
+        games.update(results["games"])
+        if results["num_pages"] > 1:
+            for page_num in range(1, results["num_pages"]):
+                results = await self._get_eu_page(page_num)
+                games.update(results["games"])
 
         # Add pricing data
         pricing = await self.get_eu_pricing_data(list(games.keys()))
@@ -180,7 +202,9 @@ class EShop:
             games[nsuid].update(item)
         return games
 
-    def filter_wishlist_matches(self, results: Dict[str, Any]) -> Dict[int, SwitchGame]:
+    def filter_wishlist_matches(
+        self, results: List[Dict[str, Any]]
+    ) -> Dict[int, SwitchGame]:
         """Filter wishlist matches from a list of games on sale."""
         matches: Dict[int, SwitchGame] = {}
         for game in results:
