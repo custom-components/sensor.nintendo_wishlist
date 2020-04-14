@@ -2,5 +2,6 @@
     "domains": ["binary_sensor", "sensor"],
     "iot_class": "Cloud Polling",
     "name": "Nintendo Wishlist",
-    "render_readme": true
+    "render_readme": true,
+    "homeassistant": "0.106.0"
 }
