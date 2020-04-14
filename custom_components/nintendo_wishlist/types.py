@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from typing_extensions import TypedDict
 
@@ -10,3 +10,8 @@ class SwitchGame(TypedDict):
     percent_off: float
     sale_price: Optional[str]
     title: str
+
+
+class ResultsDict(TypedDict):
+    games: Dict[int, SwitchGame]
+    num_pages: int
