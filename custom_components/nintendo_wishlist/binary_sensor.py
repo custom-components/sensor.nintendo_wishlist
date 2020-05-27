@@ -2,8 +2,12 @@ import logging
 from typing import List
 
 from homeassistant import core
-from homeassistant.components.binary_sensor import BinarySensorDevice
 from homeassistant.util import slugify
+
+try:
+    from homeassistant.components.binary_sensor import BinarySensorEntity
+except ImportError:
+    from homeassistant.components.binary_sensor import BinarySensorDevice as BinarySensorEntity
 
 from .const import DOMAIN
 from .types import SwitchGame
@@ -23,7 +27,7 @@ async def async_setup_platform(
     async_add_entities(sensors, True)
 
 
-class SwitchGameQueryEntity(BinarySensorDevice):
+class SwitchGameQueryEntity(BinarySensorEntity):
     """Represents a Query for a switch game."""
 
     def __init__(self, coordinator, game_title: str):
