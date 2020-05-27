@@ -7,7 +7,10 @@ from homeassistant.util import slugify
 try:
     from homeassistant.components.binary_sensor import BinarySensorEntity
 except ImportError:
-    from homeassistant.components.binary_sensor import BinarySensorDevice as BinarySensorEntity
+    # Prior to HA 0.110
+    from homeassistant.components.binary_sensor import (
+        BinarySensorDevice as BinarySensorEntity,
+    )
 
 from .const import DOMAIN
 from .types import SwitchGame

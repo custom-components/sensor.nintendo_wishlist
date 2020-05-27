@@ -21,10 +21,23 @@ sale on your wish list in home assistant.
 
 ## Configuration
 
-| Name     | Required | Description                                                                                                                                                                                                                                                                                               |
-| -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| country  | yes      | The 2 letter country code. See [Supported Countries](#supported-countries) below.                                                                                                                                                                                                                         |
-| wishlist | yes      | A list of Nintendo Switch titles. Each item can be the exact title or just the beginning of a title in order to match multiple games. For example `Shantae` would trigger when any one of the many `Shantae` games goes on sale. Read [how wishlist matching works](#how-wish-list-matching-works) below. |
+| Name          | Required | Description                                                                                                                                                                                                                                                                                               |
+| ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| country       | yes      | The 2 letter country code. See [Supported Countries](#supported-countries) below.                                                                                                                                                                                                                         |
+| wishlist      | yes      | A list of Nintendo Switch titles. Each item can be the exact title or just the beginning of a title in order to match multiple games. For example `Shantae` would trigger when any one of the many `Shantae` games goes on sale. Read [how wishlist matching works](#how-wish-list-matching-works) below. |
+| scan_interval | no       | The minimum time interval between updates. See [time period dictionary](#time-period-dictionary) below for an example of accepted values. _Defaults to 1 hour._                                                                                                                                           |
+
+### Time Period Dictionary
+
+```yaml
+scan_interval:
+  # at least one of the following must be specified:
+  days: 0
+  hours: 0
+  minutes: 3
+  seconds: 30
+  milliseconds: 0
+```
 
 ## Sample Configuration
 
