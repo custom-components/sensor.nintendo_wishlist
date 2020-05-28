@@ -73,3 +73,17 @@ class SwitchGameQueryEntity(BinarySensorEntity):
     @property
     def device_state_attributes(self):
         return {"matches": self.matches}
+
+    async def async_update(self):
+        """Update the entity.
+
+        This is only used by the generic entity update service. Normal updates
+        happen via the coordinator.
+        """
+        await self.coordinator.async_request_refresh()
+
+    async def async_added_to_hass(self):
+        """Subscribe entity to updates when added to hass."""
+        self.async_on_remove(
+            self.coordinator.async_add_listener(self.async_write_ha_state)
+        )
