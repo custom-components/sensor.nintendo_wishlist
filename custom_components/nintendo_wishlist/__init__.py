@@ -3,16 +3,15 @@ import logging
 
 import voluptuous as vol
 
-import homeassistant.helpers.config_validation as cv
 from homeassistant import core
 from homeassistant.const import CONF_SCAN_INTERVAL
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import CONF_COUNTRY, CONF_WISHLIST, DOMAIN, DEFAULT_SCAN_INTERVAL
+from .const import CONF_COUNTRY, CONF_WISHLIST, DEFAULT_SCAN_INTERVAL, DOMAIN
 from .eshop import Country, EShop
-
 
 _LOGGER = logging.getLogger(__name__)
 CONFIG_SCHEMA = vol.Schema(

@@ -4,6 +4,9 @@ from typing import List
 from homeassistant import core
 from homeassistant.util import slugify
 
+from .const import DOMAIN
+from .types import SwitchGame
+
 try:
     from homeassistant.components.binary_sensor import BinarySensorEntity
 except ImportError:
@@ -12,8 +15,6 @@ except ImportError:
         BinarySensorDevice as BinarySensorEntity,
     )
 
-from .const import DOMAIN
-from .types import SwitchGame
 
 
 _LOGGER = logging.getLogger(__name__)

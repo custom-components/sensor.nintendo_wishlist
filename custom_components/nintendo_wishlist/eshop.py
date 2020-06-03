@@ -9,7 +9,6 @@ from algoliasearch.search_client import SearchClient
 
 from .types import ResultsDict, SwitchGame
 
-
 _LOGGER = logging.getLogger(__name__)
 
 # North American countries.

@@ -5,7 +5,6 @@ from homeassistant.helpers.entity import Entity
 
 from .const import DOMAIN
 
-
 _LOGGER = logging.getLogger(__name__)
 
 
