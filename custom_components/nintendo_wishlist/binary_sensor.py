@@ -16,7 +16,6 @@ except ImportError:
     )
 
 
-
 _LOGGER = logging.getLogger(__name__)
 
 
