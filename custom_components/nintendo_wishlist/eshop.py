@@ -134,7 +134,6 @@ class EShop:
         data = await client.multiple_queries_async(queries)
         # Filter out resuls w/o box art.
         games = [r for r in data["results"][0]["hits"] if r.get("boxArt")]
-        print("num_games", len(games))
         result["games"] = self.filter_wishlist_matches(games)
         result["num_pages"] = data["results"][0]["nbPages"]
         return result
