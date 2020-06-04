@@ -1,7 +1,8 @@
 """Test the Eshop class."""
-from custom_components.nintendo_wishlist.eshop import EShop, get_percent_off
 import pytest
-from pytest_homeassistant.async_mock import Mock
+from pytest_homeassistant.async_mock import AsyncMock, Mock
+
+from custom_components.nintendo_wishlist.eshop import EShop, get_percent_off
 
 
 def test_get_percent_off():
@@ -59,3 +60,45 @@ def test_get_na_switch_game_success():
         "title": "Aggelos",
     }
     assert expected == eshop.get_na_switch_game(game)
+
+
+async def test__get_page():
+    """Test _get_page returns the expected results."""
+    wishlist = ["Aggelos"]
+    eshop = EShop("US", Mock(), wishlist)
+    client = Mock()
+    games = [
+        {
+            "boxArt": "image.png",
+            "msrp": 24.99,
+            "nsuid": 70010000531,
+            "salePrice": 9.99,
+            "title": "Picross",
+        },
+        {
+            "boxArt": "image.png",
+            "msrp": 14.99,
+            "nsuid": 70010000532,
+            "salePrice": 8.24,
+            "title": "Aggelos",
+        },
+    ]
+    client.multiple_queries_async = AsyncMock(
+        return_value={"results": [{"hits": games, "nbPages": 1}]}
+    )
+    actual = await eshop._get_page(client, [{"params": "f=1"}])
+
+    expected = {
+        "games": {
+            70010000532: {
+                "box_art_url": "https://www.nintendo.comimage.png",
+                "normal_price": "$14.99",
+                "nsuid": 70010000532,
+                "percent_off": 45,
+                "sale_price": "$8.24",
+                "title": "Aggelos",
+            }
+        },
+        "num_pages": 1,
+    }
+    assert expected == actual
