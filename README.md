@@ -3,6 +3,7 @@
 [![](https://img.shields.io/github/release/custom-components/sensor.nintendo_wishlist/all.svg?style=for-the-badge)](https://github.com/custom-components/sensor.nintendo_wishlist/releases)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 [![](https://img.shields.io/github/license/custom-components/sensor.nintendo_wishlist?style=for-the-badge)](LICENSE)
+[![](https://img.shields.io/github/workflow/status/custom-components/sensor.nintendo_wishlist/Python%20package?style=for-the-badge)](https://github.com/custom-components/sensor.nintendo_wishlist/actions)
 
 > **_NOTE:_** This component currently only works in certain countries. See [Supported Countries](#supported-countries) below.
 
