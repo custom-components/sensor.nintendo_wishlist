@@ -131,3 +131,110 @@ async def test_fetch_na(client_mock):
             }
         }
         assert expected == actual
+
+
+async def test__get_eu_page():
+    """Test the _get_eu_page method returns the expected result."""
+    response = {
+        "response": {
+            "numFound": 2,
+            "docs": [
+                {
+                    "title": "Aggelos",
+                    "image_url": "//nintendo.com/image.png",
+                    "nsuid_txt": ["70010000532"],
+                    "price_discount_percentage_f": 10,
+                },
+                {
+                    "title": "Resident Evil",
+                    "image_url": "//nintendo.com/image.png",
+                    "nsuid_txt": ["70010000531"],
+                    "price_discount_percentage_f": 60,
+                },
+            ],
+        }
+    }
+
+    wishlist = ["Aggelos"]
+    session_mock = AsyncMock()
+    resp_mock = AsyncMock()
+    resp_mock.json = AsyncMock(return_value=response)
+    session_mock.get.return_value.__aenter__.return_value = resp_mock
+    eshop = EShop("DE", session_mock, wishlist)
+    actual = await eshop._get_eu_page()
+    expected = {
+        "games": {
+            70010000532: {
+                "box_art_url": "https://nintendo.com/image.png",
+                "nsuid": 70010000532,
+                "percent_off": 10,
+                "title": "Aggelos",
+            }
+        },
+        "num_pages": 1,
+    }
+    assert expected == actual
+
+
+def test_get_eu_switch_game():
+    """Test the get_eu_switch_game method returns the expected result."""
+    wishlist = ["Aggelos"]
+    eshop = EShop("DE", Mock(), wishlist)
+    game = {
+        "title": "Aggelos",
+        "image_url": "//nintendo.com/image.png",
+        "nsuid_txt": ["70010000532"],
+        "price_discount_percentage_f": 10,
+    }
+    actual = eshop.get_eu_switch_game(game)
+    expected = {
+        "box_art_url": "https://nintendo.com/image.png",
+        "nsuid": 70010000532,
+        "percent_off": 10,
+        "title": "Aggelos",
+    }
+    assert expected == actual
+
+
+async def test_fetch_eu():
+    """Test the fetch_eu method returns the expected result."""
+    page_response = {
+        "games": {
+            70010000532: {
+                "box_art_url": "https://nintendo.com/image.png",
+                "nsuid": 70010000532,
+                "percent_off": 10,
+                "title": "Aggelos",
+            }
+        },
+        "num_pages": 1,
+    }
+    pricing_response = {
+        "prices": [
+            {
+                "title_id": 70010000532,
+                "regular_price": {"amount": 24.99},
+                "discount_price": {"amount": 8.24},
+            }
+        ]
+    }
+    mock_resp = AsyncMock()
+    mock_resp.json = AsyncMock(return_value=pricing_response)
+
+    wishlist = ["Aggelos"]
+    session_mock = AsyncMock()
+    session_mock.get.return_value.__aenter__.return_value = mock_resp
+    eshop = EShop("DE", session_mock, wishlist)
+    eshop._get_eu_page = AsyncMock(return_value=page_response)
+    actual = await eshop.fetch_eu()
+    expected = {
+        70010000532: {
+            "box_art_url": "https://nintendo.com/image.png",
+            "nsuid": 70010000532,
+            "percent_off": 10,
+            "title": "Aggelos",
+            "normal_price": 24.99,
+            "sale_price": 8.24,
+        }
+    }
+    assert expected == actual
