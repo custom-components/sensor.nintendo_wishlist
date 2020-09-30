@@ -1,6 +1,6 @@
 """Test the Eshop class."""
 import pytest
-from pytest_homeassistant.async_mock import AsyncMock, Mock, patch
+from pytest_homeassistant_custom_component.async_mock import AsyncMock, Mock, patch
 
 from custom_components.nintendo_wishlist.eshop import EShop, get_percent_off
 
