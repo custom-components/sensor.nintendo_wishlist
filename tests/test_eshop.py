@@ -11,14 +11,14 @@ def client_mock():
     client = Mock()
     games = [
         {
-            "boxArt": "image.png",
+            "boxart": "image.png",
             "msrp": 24.99,
             "nsuid": 70010000531,
             "salePrice": 9.99,
             "title": "Picross",
         },
         {
-            "boxArt": "image.png",
+            "boxart": "image.png",
             "msrp": 14.99,
             "nsuid": 70010000532,
             "salePrice": 8.24,
@@ -62,7 +62,7 @@ def test_get_na_switch_game_bad_prefix_value_error():
     wishlist = ["title1"]
     eshop = EShop("US", Mock(), wishlist)
     with pytest.raises(ValueError, match="Couldn't find box art"):
-        game = {"boxArt": "https://nintendo.com/art.gif"}
+        game = {"boxart": "https://nintendo.com/art.gif"}
         eshop.get_na_switch_game(game)
 
 
@@ -71,7 +71,7 @@ def test_get_na_switch_game_success():
     wishlist = ["title1"]
     eshop = EShop("US", Mock(), wishlist)
     game = {
-        "boxArt": "image.png",
+        "boxart": "image.png",
         "msrp": 14.99,
         "nsuid": 70010000532,
         "salePrice": 8.24,

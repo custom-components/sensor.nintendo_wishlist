@@ -14,8 +14,8 @@ _LOGGER = logging.getLogger(__name__)
 # North American countries.
 NA_COUNTRIES: Tuple[str] = ("CA", "US")
 NA_INDEX_NAMES: Dict[str, str] = {
-    "CA": "noa_aem_game_en_ca",
-    "US": "noa_aem_game_en_us",
+    "CA": "ncom_game_en_ca",
+    "US": "ncom_game_en_us",
 }
 
 # Mapping of country code to language code.  NOTE: language must be lowercase
@@ -64,11 +64,11 @@ EU_PRICE_URL = "https://api.ec.nintendo.com/v1/price"
 
 # Below constants used by North America (US and CA)
 APP_ID = "U3B6GR4UA3"
-API_KEY = "9a20c93440cf63cf1a7008d75f7438bf"
+API_KEY = "c4da8be7fd29f0f5bfa42920b0a99dc7"
 QUERIES = [
     {
-        "indexName": "noa_aem_game_en_us",
-        "params": "query=&hitsPerPage=350&maxValuesPerFacet=30&facets=%5B%22generalFilters%22%2C%22platform%22%2C%22availability%22%2C%22categories%22%2C%22filterShops%22%2C%22virtualConsole%22%2C%22characters%22%2C%22priceRange%22%2C%22esrb%22%2C%22filterPlayers%22%5D&tagFilters=&facetFilters=%5B%5B%22generalFilters%3ADeals%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D",  # noqa
+        "indexName": "ncom_game_en_us",
+        "params": "query=&hitsPerPage=350&maxValuesPerFacet=30&page=0&analytics=false&facets=%5B%22generalFilters%22%2C%22platform%22%2C%22availability%22%2C%22genres%22%2C%22howToShop%22%2C%22virtualConsole%22%2C%22franchises%22%2C%22priceRange%22%2C%22esrbRating%22%2C%22playerFilters%22%5D&tagFilters=&facetFilters=%5B%5B%22platform%3ANintendo%20Switch%22%5D%2C%5B%22generalFilters%3ADeals%22%5D%5D",  # noqa
     },
 ]
 
@@ -105,7 +105,7 @@ class EShop:
 
     def get_na_switch_game(self, game: Dict[str, Any]) -> SwitchGame:
         """Get a SwitchGame from a json result."""
-        box_art = game.get("boxArt", game.get("gallery"))
+        box_art = game.get("boxart", game.get("gallery"))
         if not box_art or not box_art.endswith((".png", ".jpg")):
             raise ValueError("Couldn't find box art: %s", game)
 
@@ -133,7 +133,7 @@ class EShop:
         queries[0]["params"] = query_params
         data = await client.multiple_queries_async(queries)
         # Filter out resuls w/o box art.
-        games = [r for r in data["results"][0]["hits"] if r.get("boxArt")]
+        games = [r for r in data["results"][0]["hits"] if r.get("boxart")]
         result["games"] = self.filter_wishlist_matches(games)
         result["num_pages"] = data["results"][0]["nbPages"]
         return result
