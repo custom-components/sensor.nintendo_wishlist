@@ -72,6 +72,8 @@ QUERIES = [
     },
 ]
 
+NO_BOX_ART_URL = "https://raw.githubusercontent.com/custom-components/sensor.nintendo_wishlist/master/assets/no-box-art.png"  # noqa
+
 
 def get_percent_off(original_price: float, sale_price: float) -> int:
     """Returns the percentage off of the sale price vs original price.
@@ -107,10 +109,12 @@ class EShop:
         """Get a SwitchGame from a json result."""
         box_art = game.get("boxart", game.get("gallery"))
         if not box_art or not box_art.endswith((".png", ".jpg")):
-            raise ValueError("Couldn't find box art: %s", game)
+            box_art_url = NO_BOX_ART_URL
+        else:
+            box_art_url = f"https://www.nintendo.com{box_art}"
 
         return {
-            "box_art_url": f"https://www.nintendo.com{box_art}",
+            "box_art_url": box_art_url,
             "normal_price": f"${game['msrp']}",
             "nsuid": int(game["nsuid"]),
             "percent_off": get_percent_off(game["msrp"], game["salePrice"]),
@@ -132,8 +136,7 @@ class EShop:
         query_params: str = f"{params}&page={page_num}"
         queries[0]["params"] = query_params
         data = await client.multiple_queries_async(queries)
-        # Filter out resuls w/o box art.
-        games = [r for r in data["results"][0]["hits"] if r.get("boxart")]
+        games = [r for r in data["results"][0]["hits"]]
         result["games"] = self.filter_wishlist_matches(games)
         result["num_pages"] = data["results"][0]["nbPages"]
         return result

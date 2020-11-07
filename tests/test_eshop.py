@@ -2,7 +2,11 @@
 import pytest
 from pytest_homeassistant_custom_component.async_mock import AsyncMock, Mock, patch
 
-from custom_components.nintendo_wishlist.eshop import EShop, get_percent_off
+from custom_components.nintendo_wishlist.eshop import (
+    NO_BOX_ART_URL,
+    EShop,
+    get_percent_off,
+)
 
 
 @pytest.fixture
@@ -49,21 +53,46 @@ def test_init_sets_correct_fetch_method():
 
 
 def test_get_na_switch_game_no_box_art_value_error():
-    """Test a ValueError is raised if the games doesn't have a box art url."""
+    """Test we use no box art url if the games doesn't have a box art url."""
     wishlist = ["title1"]
     eshop = EShop("US", Mock(), wishlist)
-    with pytest.raises(ValueError, match="Couldn't find box art"):
-        game = {}
-        eshop.get_na_switch_game(game)
+    game = {
+        "msrp": 14.99,
+        "nsuid": 70010000532,
+        "salePrice": 8.24,
+        "title": "Aggelos",
+    }
+    expected = {
+        "box_art_url": NO_BOX_ART_URL,
+        "normal_price": "$14.99",
+        "nsuid": 70010000532,
+        "percent_off": 45,
+        "sale_price": "$8.24",
+        "title": "Aggelos",
+    }
+    assert expected == eshop.get_na_switch_game(game)
 
 
 def test_get_na_switch_game_bad_prefix_value_error():
-    """Test a ValueError is raised if the game has the wrong extension."""
+    """Test no box art url is used if the game has the wrong extension."""
     wishlist = ["title1"]
     eshop = EShop("US", Mock(), wishlist)
-    with pytest.raises(ValueError, match="Couldn't find box art"):
-        game = {"boxart": "https://nintendo.com/art.gif"}
-        eshop.get_na_switch_game(game)
+    game = {
+        "boxart": "image.exe",
+        "msrp": 14.99,
+        "nsuid": 70010000532,
+        "salePrice": 8.24,
+        "title": "Aggelos",
+    }
+    expected = {
+        "box_art_url": NO_BOX_ART_URL,
+        "normal_price": "$14.99",
+        "nsuid": 70010000532,
+        "percent_off": 45,
+        "sale_price": "$8.24",
+        "title": "Aggelos",
+    }
+    assert expected == eshop.get_na_switch_game(game)
 
 
 def test_get_na_switch_game_success():
