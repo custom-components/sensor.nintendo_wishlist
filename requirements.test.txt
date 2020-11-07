@@ -2,10 +2,10 @@
 # make new things fail. Manually update these pins when pulling in a
 # new version
 
-aioresponses==0.6.3
+aioresponses
 algoliasearch==2.2.0
 codecov
-coverage>=5.1
+coverage>=5.2.0,<=5.3.0
 mypy
 pytest-cov
 pytest-homeassistant-custom-component
