@@ -178,8 +178,11 @@ class EShop:
 
     def get_eu_switch_game(self, game: dict) -> SwitchGame:
         try:
+            image_url = game["image_url"]
+            if not image_url.startswith("https:"):
+                image_url = f"https:{image_url}"
             return {
-                "box_art_url": f"https:{game['image_url']}",
+                "box_art_url": image_url,
                 "nsuid": int(game["nsuid_txt"][0]),
                 "percent_off": game["price_discount_percentage_f"],
                 "title": game["title"],

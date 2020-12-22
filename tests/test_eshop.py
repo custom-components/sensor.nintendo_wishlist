@@ -225,6 +225,26 @@ def test_get_eu_switch_game():
     assert expected == actual
 
 
+def test_get_eu_switch_game_with_https_prefix_on_image_url():
+    """Regression test for when the image_url actually has a protocol."""
+    wishlist = ["Aggelos"]
+    eshop = EShop("DE", Mock(), wishlist)
+    game = {
+        "title": "Aggelos",
+        "image_url": "https://nintendo.com/image.png",
+        "nsuid_txt": ["70010000532"],
+        "price_discount_percentage_f": 10,
+    }
+    actual = eshop.get_eu_switch_game(game)
+    expected = {
+        "box_art_url": "https://nintendo.com/image.png",
+        "nsuid": 70010000532,
+        "percent_off": 10,
+        "title": "Aggelos",
+    }
+    assert expected == actual
+
+
 async def test_fetch_eu():
     """Test the fetch_eu method returns the expected result."""
     page_response = {
