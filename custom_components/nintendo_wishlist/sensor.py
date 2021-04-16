@@ -1,9 +1,13 @@
 import logging
 
 from homeassistant import core
-from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.update_coordinator import (
+    CoordinatorEntity,
+    DataUpdateCoordinator,
+)
 
 from .const import DOMAIN
+from .types import EShopResults
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -16,12 +20,12 @@ async def async_setup_platform(
     async_add_entities([NintendoWishlistEntity(coordinator)], True)
 
 
-class NintendoWishlistEntity(Entity):
+class NintendoWishlistEntity(CoordinatorEntity):
     """Representation of a sensor."""
 
-    def __init__(self, coordinator):
+    def __init__(self, coordinator: DataUpdateCoordinator[EShopResults]):
+        super().__init__(coordinator)
         self.attrs = {}
-        self.coordinator = coordinator
         self._state = 0
 
     @property
@@ -54,19 +58,3 @@ class NintendoWishlistEntity(Entity):
     @property
     def device_state_attributes(self):
         return self.attrs
-
-    async def async_update(self):
-        """Update the entity.
-
-        This is only used by the generic entity update service. Normal updates
-        happen via the coordinator.
-        """
-        await self.coordinator.async_request_refresh()
-
-    async def async_added_to_hass(self):
-        """Subscribe entity to updates when added to hass."""
-        self.async_on_remove(
-            self.coordinator.async_add_listener(
-                self.async_write_ha_state
-            )
-        )

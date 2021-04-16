@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Tuple
 import aiohttp
 from algoliasearch.search_client import SearchClient
 
-from .types import ResultsDict, SwitchGame
+from .types import EShopResults, ResultsDict, SwitchGame
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -101,7 +101,7 @@ class EShop:
         self.wishlist_terms = [term.lower() for term in wishlist_terms]
         self.fetch_method = self.fetch_na if country in NA_COUNTRIES else self.fetch_eu
 
-    async def fetch_on_sale(self) -> Dict[int, SwitchGame]:
+    async def fetch_on_sale(self) -> EShopResults:
         """Fetch data about games that are on sale."""
         return await self.fetch_method()
 

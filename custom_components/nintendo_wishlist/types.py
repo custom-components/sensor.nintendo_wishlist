@@ -15,3 +15,6 @@ class SwitchGame(TypedDict):
 class ResultsDict(TypedDict):
     games: Dict[int, SwitchGame]
     num_pages: int
+
+
+EShopResults = Dict[int, SwitchGame]

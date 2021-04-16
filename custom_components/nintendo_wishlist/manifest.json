@@ -5,5 +5,5 @@
   "dependencies": [],
   "name": "Nintendo Wishlist Component",
   "requirements": ["algoliasearch==2.2.0", "typing-extensions==3.7.4.1"],
-  "version": "3.1.4"
+  "version": "3.1.5"
 }

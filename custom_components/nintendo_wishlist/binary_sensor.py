@@ -2,10 +2,14 @@ import logging
 from typing import List
 
 from homeassistant import core
+from homeassistant.helpers.update_coordinator import (
+    CoordinatorEntity,
+    DataUpdateCoordinator,
+)
 from homeassistant.util import slugify
 
 from .const import DOMAIN
-from .types import SwitchGame
+from .types import EShopResults, SwitchGame
 
 try:
     from homeassistant.components.binary_sensor import BinarySensorEntity
@@ -30,12 +34,14 @@ async def async_setup_platform(
     async_add_entities(sensors, True)
 
 
-class SwitchGameQueryEntity(BinarySensorEntity):
+class SwitchGameQueryEntity(CoordinatorEntity, BinarySensorEntity):
     """Represents a Query for a switch game."""
 
-    def __init__(self, coordinator, game_title: str):
+    def __init__(
+        self, coordinator: DataUpdateCoordinator[EShopResults], game_title: str
+    ):
+        super().__init__(coordinator)
         self.attrs = {}
-        self.coordinator = coordinator
         self.game_title = game_title
         self.matches: List[SwitchGame] = []
 
@@ -73,17 +79,3 @@ class SwitchGameQueryEntity(BinarySensorEntity):
     @property
     def device_state_attributes(self):
         return {"matches": self.matches}
-
-    async def async_update(self):
-        """Update the entity.
-
-        This is only used by the generic entity update service. Normal updates
-        happen via the coordinator.
-        """
-        await self.coordinator.async_request_refresh()
-
-    async def async_added_to_hass(self):
-        """Subscribe entity to updates when added to hass."""
-        self.async_on_remove(
-            self.coordinator.async_add_listener(self.async_write_ha_state)
-        )
