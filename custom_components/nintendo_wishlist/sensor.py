@@ -56,5 +56,5 @@ class NintendoWishlistEntity(CoordinatorEntity):
         return len(matches)
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         return self.attrs

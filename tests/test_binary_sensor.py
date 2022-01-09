@@ -23,4 +23,4 @@ def test_static_properties(coordinator_mock):
     assert "on sale" == entity.unit_of_measurement
     assert "mdi:nintendo-switch" == entity.icon
     assert "Aggelos" == entity.name
-    assert {"matches": []} == entity.device_state_attributes
+    assert {"matches": []} == entity.extra_state_attributes
