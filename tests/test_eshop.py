@@ -287,3 +287,26 @@ async def test_fetch_eu():
         }
     }
     assert expected == actual
+
+
+async def test_get_eu_pricing_data_missing_discount_price():
+    """Test we don't raise an exception if the discount price is missing."""
+    pricing_response = {
+        "prices": [
+            {
+                "title_id": 70010000532,
+                "regular_price": {"amount": 24.99},
+            }
+        ]
+    }
+    mock_resp = AsyncMock()
+    mock_resp.json = AsyncMock(return_value=pricing_response)
+
+    wishlist = ["Aggelos"]
+    session_mock = AsyncMock()
+    session_mock.get.return_value.__aenter__.return_value = mock_resp
+    eshop = EShop("DE", session_mock, wishlist)
+    nsuids = [70010000532]
+    actual = await eshop.get_eu_pricing_data(nsuids)
+    expected = {70010000532: {"normal_price": 24.99, "sale_price": "?"}}
+    assert expected == actual

@@ -236,6 +236,6 @@ class EShop:
                 n_id = price["title_id"]
                 pricing[n_id] = {
                     "normal_price": price["regular_price"]["amount"],
-                    "sale_price": price["discount_price"]["amount"],
+                    "sale_price": price.get("discount_price", {}).get("amount", "?"),
                 }
         return pricing
