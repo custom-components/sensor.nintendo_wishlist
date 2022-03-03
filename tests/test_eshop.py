@@ -1,6 +1,7 @@
 """Test the Eshop class."""
+from unittest import AsyncMock, Mock, patch
+
 import pytest
-from pytest_homeassistant_custom_component.async_mock import AsyncMock, Mock, patch
 
 from custom_components.nintendo_wishlist.eshop import (
     NO_BOX_ART_URL,
