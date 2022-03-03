@@ -1,5 +1,5 @@
 """Test the Eshop class."""
-from unittest import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 

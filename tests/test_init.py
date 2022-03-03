@@ -1,6 +1,6 @@
 """Test the setup of the component."""
 from datetime import timedelta
-from unittest import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 from custom_components.nintendo_wishlist.const import DEFAULT_SCAN_INTERVAL, DOMAIN
 from custom_components.nintendo_wishlist.eshop import Country
