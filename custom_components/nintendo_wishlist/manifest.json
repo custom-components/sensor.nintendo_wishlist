@@ -4,6 +4,6 @@
   "documentation": "https://github.com/custom-components/sensor.nintendo_wishlist",
   "dependencies": [],
   "name": "Nintendo Wishlist Component",
-  "requirements": ["algoliasearch==2.2.0", "typing-extensions==4.1.1"],
+  "requirements": ["algoliasearch==2.2.0"],
   "version": "3.1.8"
 }

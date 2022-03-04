@@ -1,20 +1,20 @@
-from typing import Any, Dict, Optional
+from __future__ import annotations
 
-from typing_extensions import TypedDict
+from typing import TypedDict
 
 
 class SwitchGame(TypedDict):
     box_art_url: str
-    normal_price: Optional[str]
+    normal_price: str | None
     nsuid: int
     percent_off: float
-    sale_price: Optional[str]
+    sale_price: str | None
     title: str
 
 
 class ResultsDict(TypedDict):
-    games: Dict[int, SwitchGame]
+    games: dict[int, SwitchGame]
     num_pages: int
 
 
-EShopResults = Dict[int, SwitchGame]
+EShopResults = dict[int, SwitchGame]

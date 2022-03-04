@@ -12,15 +12,15 @@ from .types import EShopResults, ResultsDict, SwitchGame
 _LOGGER = logging.getLogger(__name__)
 
 # North American countries.
-NA_COUNTRIES: Tuple[str] = ("CA", "US")
-NA_INDEX_NAMES: Dict[str, str] = {
+NA_COUNTRIES: tuple[str] = ("CA", "US")
+NA_INDEX_NAMES: dict[str, str] = {
     "CA": "ncom_game_en_ca",
     "US": "ncom_game_en_us",
 }
 
 # Mapping of country code to language code.  NOTE: language must be lowercase
 # in the URL to work.
-COUNTRY_LANG: Dict[str, str] = {
+COUNTRY_LANG: dict[str, str] = {
     "AT": "at",
     "BE": "nl",
     "CA": "en",
@@ -94,7 +94,7 @@ class EShop:
         self,
         country: Country,
         session: aiohttp.ClientSession,
-        wishlist_terms: List[str],
+        wishlist_terms: list[str],
     ):
         self.country = country
         self.session = session
@@ -105,7 +105,7 @@ class EShop:
         """Fetch data about games that are on sale."""
         return await self.fetch_method()
 
-    def get_na_switch_game(self, game: Dict[str, Any]) -> SwitchGame:
+    def get_na_switch_game(self, game: dict[str, Any]) -> SwitchGame:
         """Get a SwitchGame from a json result."""
         box_art = game.get("boxart", game.get("gallery"))
         if not box_art or not box_art.endswith((".png", ".jpg")):
@@ -130,7 +130,7 @@ class EShop:
         :returns: A tuple where the first item is the dict of switch games and the 2nd
             is the total number of pages of results.
         """
-        game_results: Dict[int, SwitchGame] = {}
+        game_results: dict[int, SwitchGame] = {}
         result: ResultsDict = {"games": game_results, "num_pages": 1}
         params = queries[0]["params"]
         query_params: str = f"{params}&page={page_num}"
@@ -141,9 +141,9 @@ class EShop:
         result["num_pages"] = data["results"][0]["nbPages"]
         return result
 
-    async def fetch_na(self) -> Dict[int, SwitchGame]:
+    async def fetch_na(self) -> dict[int, SwitchGame]:
         """Fetch data for North American countries."""
-        games: Dict[int, SwitchGame] = {}
+        games: dict[int, SwitchGame] = {}
         queries = copy.copy(QUERIES)
         queries[0]["indexName"] = NA_INDEX_NAMES[self.country]
         async with SearchClient.create(APP_ID, API_KEY) as client:
@@ -159,7 +159,7 @@ class EShop:
 
     async def _get_eu_page(self, page: int = 0) -> ResultsDict:
         """Get all games on sale for the provided page."""
-        games: Dict[int, SwitchGame] = {}
+        games: dict[int, SwitchGame] = {}
         result: ResultsDict = {"games": games, "num_pages": 1}
 
         # 1st page starts at 0, 2nd page starts at 500, etc.
@@ -191,8 +191,8 @@ class EShop:
             _LOGGER.exception("Error getting eu game: %s", game)
             raise
 
-    async def fetch_eu(self) -> Dict[int, SwitchGame]:
-        games: Dict[int, SwitchGame] = {}
+    async def fetch_eu(self) -> dict[int, SwitchGame]:
+        games: dict[int, SwitchGame] = {}
 
         results = await self._get_eu_page()
         games.update(results["games"])
@@ -208,10 +208,10 @@ class EShop:
         return games
 
     def filter_wishlist_matches(
-        self, results: List[Dict[str, Any]]
-    ) -> Dict[int, SwitchGame]:
+        self, results: list[dict[str, Any]]
+    ) -> dict[int, SwitchGame]:
         """Filter wishlist matches from a list of games on sale."""
-        matches: Dict[int, SwitchGame] = {}
+        matches: dict[int, SwitchGame] = {}
         for game in results:
             if not game["title"].lower().startswith(tuple(self.wishlist_terms)):
                 continue
@@ -222,9 +222,9 @@ class EShop:
             matches[switch_game["nsuid"]] = switch_game
         return matches
 
-    async def get_eu_pricing_data(self, nsuids: List[int]):
+    async def get_eu_pricing_data(self, nsuids: list[int]):
         """Get EU pricing data for a list of nsuids."""
-        pricing: Dict[int, Dict[str, Any]] = {}
+        pricing: dict[int, dict[str, Any]] = {}
         params = {
             "country": self.country,
             "ids": ",".join([str(nsuid) for nsuid in nsuids]),

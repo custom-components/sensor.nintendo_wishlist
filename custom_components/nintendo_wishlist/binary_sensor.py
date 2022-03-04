@@ -43,7 +43,7 @@ class SwitchGameQueryEntity(CoordinatorEntity, BinarySensorEntity):
         super().__init__(coordinator)
         self.attrs = {}
         self.game_title = game_title
-        self.matches: List[SwitchGame] = []
+        self.matches: list[SwitchGame] = []
 
     @property
     def unit_of_measurement(self):
