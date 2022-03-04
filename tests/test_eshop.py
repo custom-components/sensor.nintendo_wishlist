@@ -2,8 +2,11 @@
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
+from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
 from custom_components.nintendo_wishlist.eshop import (
+    EU_PRICE_URL,
+    EU_SEARCH_URL,
     NO_BOX_ART_URL,
     EShop,
     get_percent_off,
@@ -163,7 +166,7 @@ async def test_fetch_na(client_mock):
         assert expected == actual
 
 
-async def test__get_eu_page():
+async def test__get_eu_page(hass):
     """Test the _get_eu_page method returns the expected result."""
     response = {
         "response": {
@@ -185,25 +188,24 @@ async def test__get_eu_page():
         }
     }
 
+    mocker = AiohttpClientMocker()
+    mocker.get(EU_SEARCH_URL.format(start=0, language="de"), json=response)
     wishlist = ["Aggelos"]
-    session_mock = AsyncMock()
-    resp_mock = AsyncMock()
-    resp_mock.json = AsyncMock(return_value=response)
-    session_mock.get.return_value.__aenter__.return_value = resp_mock
-    eshop = EShop("DE", session_mock, wishlist)
-    actual = await eshop._get_eu_page()
-    expected = {
-        "games": {
-            70010000532: {
-                "box_art_url": "https://nintendo.com/image.png",
-                "nsuid": 70010000532,
-                "percent_off": 10,
-                "title": "Aggelos",
-            }
-        },
-        "num_pages": 1,
-    }
-    assert expected == actual
+    async with mocker.create_session(hass.loop) as session:
+        eshop = EShop("DE", session, wishlist)
+        actual = await eshop._get_eu_page()
+        expected = {
+            "games": {
+                70010000532: {
+                    "box_art_url": "https://nintendo.com/image.png",
+                    "nsuid": 70010000532,
+                    "percent_off": 10,
+                    "title": "Aggelos",
+                }
+            },
+            "num_pages": 1,
+        }
+        assert expected == actual
 
 
 def test_get_eu_switch_game():
@@ -246,7 +248,7 @@ def test_get_eu_switch_game_with_https_prefix_on_image_url():
     assert expected == actual
 
 
-async def test_fetch_eu():
+async def test_fetch_eu(hass):
     """Test the fetch_eu method returns the expected result."""
     page_response = {
         "games": {
@@ -268,29 +270,30 @@ async def test_fetch_eu():
             }
         ]
     }
-    mock_resp = AsyncMock()
-    mock_resp.json = AsyncMock(return_value=pricing_response)
 
     wishlist = ["Aggelos"]
-    session_mock = AsyncMock()
-    session_mock.get.return_value.__aenter__.return_value = mock_resp
-    eshop = EShop("DE", session_mock, wishlist)
-    eshop._get_eu_page = AsyncMock(return_value=page_response)
-    actual = await eshop.fetch_eu()
-    expected = {
-        70010000532: {
-            "box_art_url": "https://nintendo.com/image.png",
-            "nsuid": 70010000532,
-            "percent_off": 10,
-            "title": "Aggelos",
-            "normal_price": 24.99,
-            "sale_price": 8.24,
+    mocker = AiohttpClientMocker()
+    mocker.get(EU_PRICE_URL, json=pricing_response)
+    async with mocker.create_session(hass.loop) as session:
+        eshop = EShop("DE", session, wishlist)
+        eshop._get_eu_page = AsyncMock(return_value=page_response)
+        actual = await eshop.fetch_eu()
+        expected = {
+            70010000532: {
+                "box_art_url": "https://nintendo.com/image.png",
+                "nsuid": 70010000532,
+                "percent_off": 10,
+                "title": "Aggelos",
+                "normal_price": 24.99,
+                "sale_price": 8.24,
+            }
         }
-    }
-    assert expected == actual
+        assert expected == actual
 
 
-async def test_get_eu_pricing_data_missing_discount_price():
+async def test_get_eu_pricing_data_missing_discount_price(
+    hass,
+) -> None:
     """Test we don't raise an exception if the discount price is missing."""
     pricing_response = {
         "prices": [
@@ -300,14 +303,12 @@ async def test_get_eu_pricing_data_missing_discount_price():
             }
         ]
     }
-    mock_resp = AsyncMock()
-    mock_resp.json = AsyncMock(return_value=pricing_response)
-
     wishlist = ["Aggelos"]
-    session_mock = AsyncMock()
-    session_mock.get.return_value.__aenter__.return_value = mock_resp
-    eshop = EShop("DE", session_mock, wishlist)
-    nsuids = [70010000532]
-    actual = await eshop.get_eu_pricing_data(nsuids)
-    expected = {70010000532: {"normal_price": 24.99, "sale_price": "?"}}
-    assert expected == actual
+    mocker = AiohttpClientMocker()
+    mocker.get(EU_PRICE_URL, json=pricing_response)
+    async with mocker.create_session(hass.loop) as session:
+        eshop = EShop("DE", session, wishlist)
+        nsuids = [70010000532]
+        actual = await eshop.get_eu_pricing_data(nsuids)
+        expected = {70010000532: {"normal_price": 24.99, "sale_price": "?"}}
+        assert expected == actual
