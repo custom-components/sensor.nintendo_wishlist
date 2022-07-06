@@ -19,14 +19,14 @@ def client_mock():
     client = Mock()
     games = [
         {
-            "boxart": "image.png",
+            "boxart": "https://assets.nintendo.com/0/box-eShop",
             "msrp": 24.99,
             "nsuid": 70010000531,
             "salePrice": 9.99,
             "title": "Picross",
         },
         {
-            "boxart": "image.png",
+            "boxart": "https://assets.nintendo.com/1/box-eShop",
             "msrp": 14.99,
             "nsuid": 70010000532,
             "salePrice": 8.24,
@@ -77,28 +77,6 @@ def test_get_na_switch_game_no_box_art_value_error():
     assert expected == eshop.get_na_switch_game(game)
 
 
-def test_get_na_switch_game_bad_prefix_value_error():
-    """Test no box art url is used if the game has the wrong extension."""
-    wishlist = ["title1"]
-    eshop = EShop("US", Mock(), wishlist)
-    game = {
-        "boxart": "image.exe",
-        "msrp": 14.99,
-        "nsuid": 70010000532,
-        "salePrice": 8.24,
-        "title": "Aggelos",
-    }
-    expected = {
-        "box_art_url": NO_BOX_ART_URL,
-        "normal_price": "$14.99",
-        "nsuid": 70010000532,
-        "percent_off": 45,
-        "sale_price": "$8.24",
-        "title": "Aggelos",
-    }
-    assert expected == eshop.get_na_switch_game(game)
-
-
 def test_get_na_switch_game_success():
     """Test we return the expected SwitchGame instance from the response."""
     wishlist = ["title1"]
@@ -111,7 +89,7 @@ def test_get_na_switch_game_success():
         "title": "Aggelos",
     }
     expected = {
-        "box_art_url": "https://www.nintendo.comimage.png",
+        "box_art_url": "image.png",
         "normal_price": "$14.99",
         "nsuid": 70010000532,
         "percent_off": 45,
@@ -130,7 +108,7 @@ async def test__get_page(client_mock):
     expected = {
         "games": {
             70010000532: {
-                "box_art_url": "https://www.nintendo.comimage.png",
+                "box_art_url": "https://assets.nintendo.com/1/box-eShop",
                 "normal_price": "$14.99",
                 "nsuid": 70010000532,
                 "percent_off": 45,
@@ -155,7 +133,7 @@ async def test_fetch_na(client_mock):
 
         expected = {
             70010000532: {
-                "box_art_url": "https://www.nintendo.comimage.png",
+                "box_art_url": "https://assets.nintendo.com/1/box-eShop",
                 "normal_price": "$14.99",
                 "nsuid": 70010000532,
                 "percent_off": 45,

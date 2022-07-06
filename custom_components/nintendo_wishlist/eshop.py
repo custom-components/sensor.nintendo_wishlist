@@ -108,10 +108,10 @@ class EShop:
     def get_na_switch_game(self, game: dict[str, Any]) -> SwitchGame:
         """Get a SwitchGame from a json result."""
         box_art = game.get("boxart", game.get("gallery"))
-        if not box_art or not box_art.endswith((".png", ".jpg")):
+        if not box_art:
             box_art_url = NO_BOX_ART_URL
         else:
-            box_art_url = f"https://www.nintendo.com{box_art}"
+            box_art_url = box_art
 
         return {
             "box_art_url": box_art_url,
