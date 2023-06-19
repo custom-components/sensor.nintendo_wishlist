@@ -136,9 +136,10 @@ class EShop:
         query_params: str = f"{params}&page={page_num}"
         queries[0]["params"] = query_params
         data = await client.multiple_queries_async(queries)
-        games = [r for r in data["results"][0]["hits"]]
+        all_results = await data
+        games = [r for r in all_results["results"][0]["hits"]]
         result["games"] = self.filter_wishlist_matches(games)
-        result["num_pages"] = data["results"][0]["nbPages"]
+        result["num_pages"] = all_results["results"][0]["nbPages"]
         return result
 
     async def fetch_na(self) -> dict[int, SwitchGame]:
