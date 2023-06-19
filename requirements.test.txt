@@ -3,9 +3,8 @@
 # new version
 
 aioresponses
-algoliasearch==2.2.0
-codecov==2.1.12
-coverage==6.2.0
-mypy==0.931
-pytest-cov==2.12.1
+algoliasearch==3.0.0
+coverage==7.2.4
+mypy==1.3.0
+pytest-cov==3.0.0
 pytest-homeassistant-custom-component>=0.6.2
