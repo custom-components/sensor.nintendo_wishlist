@@ -1,4 +1,5 @@
 """Test the setup of the component."""
+
 from datetime import timedelta
 from unittest.mock import AsyncMock, Mock, patch
 

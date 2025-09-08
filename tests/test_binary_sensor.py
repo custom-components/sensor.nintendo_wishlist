@@ -1,4 +1,5 @@
 """Test the SwitchGameQueryEntity."""
+
 from custom_components.nintendo_wishlist.binary_sensor import SwitchGameQueryEntity
 
 
